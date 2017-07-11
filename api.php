@@ -3,6 +3,7 @@ header('Content-type: application/json; charset=utf-8');
 //error_reporting(0);
 include 'libs/AipFace.php';
 include 'libs/mysql.class.php';
+include 'distance.function.php';
 include 'conn.php';
 
 const APP_ID = '9673887';
