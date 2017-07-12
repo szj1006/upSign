@@ -248,7 +248,6 @@ $(function () {
     $("#Leave").click(function() {
         localStorage.number = $("#lNumber").val();
         localStorage.name = $("#lName").val();
-        App.loader('show');
         $.ajax({
             type: "post",
             url: "api.php",
@@ -263,7 +262,6 @@ $(function () {
                 reason: $("#reason").val()
             },
             success: function(data){
-                App.loader('hide');
                 if (data.status == 0){
                     $('#modal-leave').modal('hide');
                     swal('请假成功', '老师已收到您的请假信息！', 'success');
@@ -276,7 +274,6 @@ $(function () {
                 }
             },
             error: function(){
-                App.loader('hide');
                 swal('网络错误', '请刷新页面后进行重试！', 'error');
             }
         });
