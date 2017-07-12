@@ -197,7 +197,7 @@ $(function () {
                 $('#Signin').removeAttr("disabled");
                 $("#progress").css('display','none');
                 $("#avatar").attr('src','uploads/' + data.result.file_name);
-                swal('上传成功', '请填写学号与姓名进行签到！', 'success');
+                swal('上传成功', '请填写教室号/学号与姓名进行签到！', 'success');
             }else{
                 swal('网络错误', '请刷新页面后进行重试！', 'error');
             }

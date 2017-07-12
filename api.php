@@ -20,7 +20,7 @@ switch (isset($_POST['action'])?$_POST['action']:null) {
             echo '{"status":"1"}';
         }else{
             $result = $M->setSignin($room,$lat,$long);
-            echo $result ? '{"status":"0"}':var_dump($result);
+            echo $result ? '{"status":"0"}':'{"status":"1"}';
         }
         break;
     //签到信息
@@ -73,7 +73,7 @@ switch (isset($_POST['action'])?$_POST['action']:null) {
                             $tlong = $getRoom['long'];
                             $distance = getDistance($slat,$slong,$tlat,$tlong);
                             if($distance < 20) {
-                                $signin = $M->Signin($room,$tlat,$tlong,iconv("UTF-8","GB2312//IGNORE", $name),$number);
+                                $signin = $M->Signin($room,$tlat,$tlong,$name,$number);
                                 echo $signin ? '{"status":"0","scores":"'.$result['result'][0]['scores'][0].'"}':'{"status":"1"}';
                             }else{
                                 echo '{"status":"1"}';
@@ -102,7 +102,7 @@ switch (isset($_POST['action'])?$_POST['action']:null) {
             if($M->checkSign($room,$number)){
                 echo '{"status":"3"}';
             }else{
-                $leave = $M->Signin($room,$lat,$long,iconv("UTF-8","GB2312//IGNORE", $name),$number,'1',iconv("UTF-8","GB2312//IGNORE", $reason));
+                $leave = $M->Signin($room,$lat,$long,$name,$number,'1',iconv("UTF-8","GB2312//IGNORE", $reason));
                 echo $leave ? '{"status":"0"}':'{"status":"1"}';
             }
         }else{
