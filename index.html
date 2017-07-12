@@ -27,6 +27,12 @@
             </div>
             <div class="form-horizontal">
                 <div class="form-group">
+                    <div class="col-md-12">
+                        <label for="room">教室号</label>
+                        <input class="form-control" type="text" id="room" name="room" placeholder="请输入所在教室号...">
+                    </div>
+                </div>
+                <div class="form-group">
                     <div class="col-md-6">
                         <label for="number">学号</label>
                         <input class="form-control" type="text" id="number" name="number" placeholder="请输入你的学号...">
@@ -52,9 +58,63 @@
                         <button class="btn btn-lg btn-block btn-success" type="submit" id="Signin" disabled>开始签到</button>
                     </div>
                 </div>
+                <div class="form-group">
+                    <div class="col-xs-12">
+                        <button class="btn btn-lg btn-block btn-warning" data-toggle="modal" data-target="#modal-leave" type="button">我要请假</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+    <!-- Leave Modal -->
+    <div class="modal fade" id="modal-leave" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-popout">
+            <div class="modal-content">
+                <div class="block block-themed block-transparent remove-margin-b">
+                    <div class="block-header bg-danger">
+                        <ul class="block-options">
+                            <li>
+                                <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
+                            </li>
+                        </ul>
+                        <h3 class="block-title">我要请假</h3>
+                    </div>
+                    <div class="block-content">
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <label for="lRoom">教室号</label>
+                                    <input class="form-control" type="text" id="lRoom" name="lRoom" placeholder="请输入所在教室号...">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-6">
+                                    <label for="lNumber">学号</label>
+                                    <input class="form-control" type="text" id="lNumber" name="lNumber" placeholder="请输入你的学号...">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="lName">姓名</label>
+                                    <input class="form-control" type="text" id="lName" name="lName" placeholder="请输入你的姓名...">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <label for="reason">请假理由</label>
+                                    <textarea class="form-control" id="reason" name="reason" rows="6" placeholder="请输入你的请假理由..."></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-xs-12">
+                                    <button class="btn btn-lg btn-block btn-danger" type="submit" id="Leave">确认请假</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END Leave Modal -->
     <footer id="page-footer" class="content-mini content-mini-full font-s12 bg-gray-lighter clearfix">
         <div class="pull-right">
             Crafted with <i class="fa fa-heart text-city"></i> by <a class="font-w600" href="https://sangsir.com" target="_blank">SangSir</a>
@@ -73,6 +133,12 @@
     <script src="statics/js/plugins/exif.js"></script>
     <script>
 $(function () {
+    var lsNumber = $('#number').val();
+    var lsName = $('#name').val();
+    if(lsNumber == 0 || lsName == 0){
+        $('#number,#lNumber').val(localStorage.number);
+        $('#name,#lName').val(localStorage.name);
+    }
     function geo_success(position) {
         $('#lat').val(position.coords.latitude);
         $('#long').val(position.coords.longitude);
@@ -116,7 +182,7 @@ $(function () {
         },
         add: function (e, data) {
             EXIF.getData(data.files[0], function() {
-                if(checkExif(this) === false){
+                if(!checkExif(this) === false){
                     swal('出现错误', '请上传系统相机即时拍照后的照片！', 'error');
                 }else{
                     $("#progress").css('display','block');
@@ -144,12 +210,15 @@ $(function () {
         }
     });
     $("#Signin").click(function() {
+        localStorage.number = $("#number").val();
+        localStorage.name = $("#name").val();
         $.ajax({
             type: "post",
             url: "api.php",
             dataType: "json",
             data: {
                 action: "Signin",
+                room: $("#room").val(),
                 number: $("#number").val(),
                 name: $("#name").val(),
                 file_name: $("#file_name").val(),
@@ -160,7 +229,35 @@ $(function () {
                 if (data.status == 0){
                     swal('签到成功', '当前人脸评分为：' + data.scores, 'success');
                 }else{
-                    swal('签到失败', '请检查学号姓名与自拍是否为本人！', 'error');
+                    swal('签到失败', '请检查教室号和所在位置与学号/姓名/自拍是否为本人！', 'error');
+                }
+            },
+            error: function(){
+                swal('网络错误', '请刷新页面后进行重试！', 'error');
+            }
+        });
+    });
+    $("#Leave").click(function() {
+        localStorage.number = $("#number").val();
+        localStorage.name = $("#name").val();
+        $.ajax({
+            type: "post",
+            url: "api.php",
+            dataType: "json",
+            data: {
+                action: "Leave",
+                room: $("#lRoom").val(),
+                number: $("#lNumber").val(),
+                name: $("#lName").val(),
+                lat: $("#lat").val(),
+                long: $("#long").val(),
+                reason: $("#reason").val()
+            },
+            success: function(data){
+                if (data.status == 0){
+                    swal('请假成功', '老师已收到您的请假信息！', 'success');
+                }else{
+                    swal('请假失败', '请检查学号/姓名与请假理由是否填写！', 'error');
                 }
             },
             error: function(){

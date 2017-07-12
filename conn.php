@@ -1,7 +1,11 @@
 <?php
-define('DB_HOST','localhost');
-define('DB_USER','root');
-define('DB_PASS','root');
-define('DB_NAME','signin');
-$M = new mysql();
-$M->connect(DB_HOST,DB_USER,DB_PASS,DB_NAME);
+//mysql
+const DB_HOST = 'localhost';
+const DB_USER = 'root';
+const DB_PASS = 'root';
+const DB_NAME = 'signin';
+
+//AipFace
+const APP_ID = '9673887';
+const API_KEY = 'wBpyc2fV9buiOWT4Ho0EsYbz';
+const SECRET_KEY = '44qn8lDCNfRR8WrEH9On6aAW5O13Qxel';

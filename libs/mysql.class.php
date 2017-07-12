@@ -44,20 +44,27 @@ class mysql{
         if(empty($room) || empty($lat) || empty($long)){
             return false;
         }
-        return $this->query("insert into `signin`.`sign_teacher` (`room`, `lat`, `long`) values ('".$this->deStr($room)."', '".$this->deStr($lat)."', '".$this->deStr($long)."')");
+        return $this->query("insert into `".DB_NAME."`.`sign_teacher` (`room`, `lat`, `long`) values ('".$this->deStr($room)."', '".$this->deStr($lat)."', '".$this->deStr($long)."')");
+    }
+    //调取教室位置信息
+    public function getGPS($room){
+        if(empty($room)){
+            return false;
+        }
+        return $this->getOne("select `room`,`lat`,`long` from `sign_teacher` where `room` = '".$this->deStr($room)."'");
     }
     //调取学生签到情况
     public function getSignin($room){
         if(empty($room)){
             return false;
         }
-        return $this->getAll("select `room`,`section` from `".$this->deStr($day)."` where `build` = '".$this->deStr($build)."' AND `week` LIKE '%,".$this->deStr($week).",%' AND `section` in ('".$section."') ORDER BY `section` ASC");
+        return $this->getAll("select * from `sign_student` where `room` = '".$this->deStr($room)."'");
     }
     //写入学生签到信息
-    public function Signin($room,$lat,$long,$name,$number){
+    public function Signin($room,$lat,$long,$name,$number,$status,$reason=''){
         if(empty($room) || empty($lat) || empty($long) || empty($name) || empty($number)){
             return false;
         }
-        return $this->query("select `room`,`section` from `".$this->deStr($day)."` where `build` = '".$this->deStr($build)."' AND `week` LIKE '%,".$this->deStr($week).",%' AND `section` in ('".$section."') ORDER BY `section` ASC");
+        return $this->query("insert into `".DB_NAME."`.`sign_student` (`room`, `lat`, `long`, `name`, `number`, `status`, `reason`) values ('".$this->deStr($room)."', '".$this->deStr($lat)."', '".$this->deStr($long)."', '".$this->deStr($name)."', '".$this->deStr($number)."', '".$this->deStr($status)."', '".$this->deStr($reason)."')");
     }
 }
