@@ -65,10 +65,10 @@ $(function () {
     function geo_error(error) {
         switch (error.code) {
             case error.TIMEOUT:
-            swal('出错了...', '获取地理位置超时，请检查GPS是否开启！', 'error');
+            swal('定位错误', '获取地理位置超时，请检查GPS是否开启！', 'error');
             break;
             case error.PERMISSION_DENIED:
-            swal('出错了...', '请允许浏览器进行地理定位，或使用系统浏览器进行签到！', 'error');
+            swal('定位错误', '请允许浏览器进行地理定位，或使用系统浏览器进行签到！', 'error');
             break;
         };
     }
@@ -79,7 +79,7 @@ $(function () {
             timeout: 27000
         });
     }else{
-        swal('出错了...', '浏览器不支持Geo Location API，请使用最新版浏览器！', 'error');
+        swal('定位错误', '浏览器不支持Geo Location API，请使用最新版浏览器！', 'error');
     }
     $("#setSignin").click(function() {
         $.ajax({
@@ -100,7 +100,7 @@ $(function () {
                     }
                 },
                 error: function(){
-                    swal('出错了...', '网络错误，请稍后再试！', 'error');
+                    swal('网络错误', '网络错误，请稍后再试！', 'error');
                 }
         });
     });

@@ -123,6 +123,7 @@
             <a class="font-w600" href="https://sangsir.com" target="_blank">上上签</a> &copy; 2017 - 沐码团队
         </div>
     </footer>
+    <div id="page-loader"></div>
 </div>
     <script src="statics/js/oneui.min.js"></script>
     <script src="statics/js/core/jquery.ui.widget.js"></script>
@@ -146,10 +147,10 @@ $(function () {
     function geo_error(error) {
         switch (error.code) {
             case error.TIMEOUT:
-            swal('出现错误', '获取地理位置超时，请检查GPS是否开启！', 'error');
+            swal('定位错误', '获取地理位置超时，请检查GPS是否开启！', 'error');
             break;
             case error.PERMISSION_DENIED:
-            swal('出现错误', '请允许浏览器进行地理定位，或使用系统浏览器进行签到！', 'error');
+            swal('定位错误', '请允许浏览器进行地理定位，或使用系统浏览器进行签到！', 'error');
             break;
         };
     }
@@ -160,7 +161,7 @@ $(function () {
             timeout: 27000
         });
     }else{
-        swal('出现错误', '浏览器不支持Geo Location API，请使用最新版浏览器！', 'error');
+        swal('定位错误', '浏览器不支持Geo Location API，请使用最新版浏览器！', 'error');
     }
     function checkExif(data) {
         var gettime = EXIF.getTag(data, 'DateTime');
@@ -183,7 +184,7 @@ $(function () {
         add: function (e, data) {
             EXIF.getData(data.files[0], function() {
                 if(!checkExif(this) === false){
-                    swal('出现错误', '请上传系统相机即时拍照后的照片！', 'error');
+                    swal('照片错误', '请上传系统相机即时拍照后的照片！', 'error');
                 }else{
                     $("#progress").css('display','block');
                     data.submit();
@@ -212,6 +213,7 @@ $(function () {
     $("#Signin").click(function() {
         localStorage.number = $("#number").val();
         localStorage.name = $("#name").val();
+        App.loader('show');
         $.ajax({
             type: "post",
             url: "api.php",
@@ -226,13 +228,19 @@ $(function () {
                 long: $("#long").val()
             },
             success: function(data){
+                App.loader('hide');
                 if (data.status == 0){
-                    swal('签到成功', '当前人脸评分为：' + data.scores, 'success');
+                    swal('签到成功', '本次人脸评分为：' + data.scores, 'success');
+                }else if(data.status == 3){
+                    swal('签到失败', '您已成功签到，请不要重复签到！', 'error');
+                }else if(data.status == 4){
+                    swal('签到失败', '当前教室并未开启签到，请检查教室号！', 'error');
                 }else{
                     swal('签到失败', '请检查教室号和所在位置与学号/姓名/自拍是否为本人！', 'error');
                 }
             },
             error: function(){
+                App.loader('hide');
                 swal('网络错误', '请刷新页面后进行重试！', 'error');
             }
         });
@@ -240,6 +248,7 @@ $(function () {
     $("#Leave").click(function() {
         localStorage.number = $("#lNumber").val();
         localStorage.name = $("#lName").val();
+        App.loader('show');
         $.ajax({
             type: "post",
             url: "api.php",
@@ -254,14 +263,20 @@ $(function () {
                 reason: $("#reason").val()
             },
             success: function(data){
+                App.loader('hide');
                 if (data.status == 0){
                     $('#modal-leave').modal('hide');
                     swal('请假成功', '老师已收到您的请假信息！', 'success');
+                }else if(data.status == 3){
+                    swal('请假失败', '老师已有您的签到/请假信息，请勿重复！', 'error');
+                }else if(data.status == 4){
+                    swal('请假失败', '当前教室并未开启签到，请检查教室号！', 'error');
                 }else{
-                    swal('请假失败', '请检查学号/姓名与请假理由是否填写！', 'error');
+                    swal('请假失败', '请检查教室号/学号/姓名与请假理由是否填写正确！', 'error');
                 }
             },
             error: function(){
+                App.loader('hide');
                 swal('网络错误', '请刷新页面后进行重试！', 'error');
             }
         });

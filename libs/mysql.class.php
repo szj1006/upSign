@@ -39,15 +39,15 @@ class mysql{
             return addslashes($str);
         }
     }
-    //设置教师端信息
-    public function setSignin($room,$lat,$long,$status='0'){
-        if(empty($room) || empty($lat) || empty($long)){
+    //检查学生是否存在
+    public function checkSign($room,$number){
+        if(empty($room) || empty($number)){
             return false;
         }
-        return $this->query("insert into `".DB_NAME."`.`sign_teacher` (`room`, `lat`, `long`, `status`) values ('".$this->deStr($room)."', '".$this->deStr($lat)."', '".$this->deStr($long)."', '".$this->deStr($status)."')");
+        return $this->getOne("select * from `sign_student` where `room` = '".$this->deStr($room)."' AND `number` = '".$this->deStr($number)."'");
     }
-    //调取教室位置信息
-    public function getGPS($room,$status='0'){
+    //调取教室信息
+    public function getRoom($room,$status='0'){
         if(empty($room)){
             return false;
         }
@@ -59,6 +59,13 @@ class mysql{
             return false;
         }
         return $this->getAll("select * from `sign_student` where `room` = '".$this->deStr($room)."' AND `status` = '".$this->deStr($status)."'");
+    }
+    //设置教师端信息
+    public function setSignin($room,$lat,$long,$status='0'){
+        if(empty($room) || empty($lat) || empty($long)){
+            return false;
+        }
+        return $this->query("insert into `".DB_NAME."`.`sign_teacher` (`room`, `lat`, `long`, `status`) values ('".$this->deStr($room)."', '".$this->deStr($lat)."', '".$this->deStr($long)."', '".$this->deStr($status)."')");
     }
     //写入学生签到信息
     public function Signin($room,$lat,$long,$name,$number,$status='0',$reason=''){

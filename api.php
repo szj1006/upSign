@@ -16,7 +16,7 @@ switch (isset($_POST['action'])?$_POST['action']:null) {
         $room = isset($_POST['room'])?$_POST['room']:null; //教室号
         $lat = isset($_POST['lat'])?$_POST['lat']:null; //纬度
         $long = isset($_POST['long'])?$_POST['long']:null; //经度
-        if($M->getGPS($room)){
+        if($M->getRoom($room)){
             echo '{"status":"1"}';
         }else{
             $result = $M->setSignin($room,$lat,$long);
@@ -58,28 +58,36 @@ switch (isset($_POST['action'])?$_POST['action']:null) {
         $slat = isset($_POST['lat'])?$_POST['lat']:null; //纬度
         $slong = isset($_POST['long'])?$_POST['long']:null; //经度
         $dir = "uploads/".iconv("UTF-8","GB2312//IGNORE", $file_name);
-        $result = $aipFace->identifyUser('student',file_get_contents($dir));
-        if(array_key_exists('error_code',$result)){
-            echo '{"status":"1"}';
-        }else{
-            if($result['result'][0]['uid'] == $number && $result['result'][0]['user_info'] == $name){
-                $getGPS = $M->getGPS($room);
-                if($getGPS){
-                    $tlat = $getGPS['lat'];
-                    $tlong = $getGPS['long'];
-                    $distance = getDistance($slat,$slong,$tlat,$tlong);
-                    if($distance < 20) {
-                        $signin = $M->Signin($room,$tlat,$tlong,iconv("UTF-8","GB2312//IGNORE", $name),$number);
-                        echo $signin ? '{"status":"0","scores":"'.$result['result'][0]['scores'][0].'"}':'{"status":"1"}';
+        if($M->getRoom($room)){
+            if($M->checkSign($room,$number)){
+                echo '{"status":"3"}';
+            }else{
+                $result = $aipFace->identifyUser('student',file_get_contents($dir));
+                if(array_key_exists('error_code',$result)){
+                    echo '{"status":"1"}';
+                }else{
+                    if($result['result'][0]['uid'] == $number && $result['result'][0]['user_info'] == $name){
+                        $getRoom = $M->getRoom($room);
+                        if($getRoom){
+                            $tlat = $getRoom['lat'];
+                            $tlong = $getRoom['long'];
+                            $distance = getDistance($slat,$slong,$tlat,$tlong);
+                            if($distance < 20) {
+                                $signin = $M->Signin($room,$tlat,$tlong,iconv("UTF-8","GB2312//IGNORE", $name),$number);
+                                echo $signin ? '{"status":"0","scores":"'.$result['result'][0]['scores'][0].'"}':'{"status":"1"}';
+                            }else{
+                                echo '{"status":"1"}';
+                            }
+                        }else{
+                            echo '{"status":"1"}';
+                        }
                     }else{
                         echo '{"status":"1"}';
                     }
-                }else{
-                    echo '{"status":"1"}';
                 }
-            }else{
-                echo '{"status":"1"}';
             }
+        }else{
+            echo '{"status":"4"}';
         }
         break;
     //提交请假
@@ -90,8 +98,16 @@ switch (isset($_POST['action'])?$_POST['action']:null) {
         $lat = isset($_POST['lat'])?$_POST['lat']:null; //纬度
         $long = isset($_POST['long'])?$_POST['long']:null; //经度
         $reason = isset($_POST['reason'])?$_POST['reason']:null; //请假理由
-        $leave = $M->Signin($room,$lat,$long,iconv("UTF-8","GB2312//IGNORE", $name),$number,'1',iconv("UTF-8","GB2312//IGNORE", $reason));
-        echo $leave ? '{"status":"0"}':'{"status":"1"}';
+        if($M->getRoom($room)){
+            if($M->checkSign($room,$number)){
+                echo '{"status":"3"}';
+            }else{
+                $leave = $M->Signin($room,$lat,$long,iconv("UTF-8","GB2312//IGNORE", $name),$number,'1',iconv("UTF-8","GB2312//IGNORE", $reason));
+                echo $leave ? '{"status":"0"}':'{"status":"1"}';
+            }
+        }else{
+            echo '{"status":"4"}';
+        }
         break;
     default:
         echo '{"status":"1"}';
