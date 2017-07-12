@@ -16,8 +16,12 @@ switch (isset($_POST['action'])?$_POST['action']:null) {
         $room = isset($_POST['room'])?$_POST['room']:null; //教室号
         $lat = isset($_POST['lat'])?$_POST['lat']:null; //纬度
         $long = isset($_POST['long'])?$_POST['long']:null; //经度
-        $result = $M->setSignin($room,$lat,$long);
-        if($result){echo '{"status":"0"}';}else{echo '{"status":"1"}';}
+        if($M->getGPS($room)){
+            echo '{"status":"1"}';
+        }else{
+            $result = $M->setSignin($room,$lat,$long);
+            echo $result ? '{"status":"0"}':var_dump($result);
+        }
         break;
     //签到信息
     case 'getSignin':
@@ -60,12 +64,16 @@ switch (isset($_POST['action'])?$_POST['action']:null) {
         }else{
             if($result['result'][0]['uid'] == $number && $result['result'][0]['user_info'] == $name){
                 $getGPS = $M->getGPS($room);
-                $tlat = $getGPS['lat'];
-                $tlong = $getGPS['long'];
-                $distance = getDistance($slat,$slong,$tlat,$tlong);
-                if($distance < 20) {
-                    $signin = $M->Signin($room,$tlat,$tlong,iconv("UTF-8","GB2312//IGNORE", $name),$number,'0');
-                    echo $signin ? '{"status":"0","scores":"'.$result['result'][0]['scores'][0].'"}':'{"status":"1"}';
+                if($getGPS){
+                    $tlat = $getGPS['lat'];
+                    $tlong = $getGPS['long'];
+                    $distance = getDistance($slat,$slong,$tlat,$tlong);
+                    if($distance < 20) {
+                        $signin = $M->Signin($room,$tlat,$tlong,iconv("UTF-8","GB2312//IGNORE", $name),$number);
+                        echo $signin ? '{"status":"0","scores":"'.$result['result'][0]['scores'][0].'"}':'{"status":"1"}';
+                    }else{
+                        echo '{"status":"1"}';
+                    }
                 }else{
                     echo '{"status":"1"}';
                 }

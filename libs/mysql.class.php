@@ -40,28 +40,28 @@ class mysql{
         }
     }
     //设置教师端信息
-    public function setSignin($room,$lat,$long){
+    public function setSignin($room,$lat,$long,$status='0'){
         if(empty($room) || empty($lat) || empty($long)){
             return false;
         }
-        return $this->query("insert into `".DB_NAME."`.`sign_teacher` (`room`, `lat`, `long`) values ('".$this->deStr($room)."', '".$this->deStr($lat)."', '".$this->deStr($long)."')");
+        return $this->query("insert into `".DB_NAME."`.`sign_teacher` (`room`, `lat`, `long`, `status`) values ('".$this->deStr($room)."', '".$this->deStr($lat)."', '".$this->deStr($long)."', '".$this->deStr($status)."')");
     }
     //调取教室位置信息
-    public function getGPS($room){
+    public function getGPS($room,$status='0'){
         if(empty($room)){
             return false;
         }
-        return $this->getOne("select `room`,`lat`,`long` from `sign_teacher` where `room` = '".$this->deStr($room)."'");
+        return $this->getOne("select * from `sign_teacher` where `room` = '".$this->deStr($room)."' AND `status` = '".$this->deStr($status)."'");
     }
     //调取学生签到情况
-    public function getSignin($room){
+    public function getSignin($room,$status='0'){
         if(empty($room)){
             return false;
         }
-        return $this->getAll("select * from `sign_student` where `room` = '".$this->deStr($room)."'");
+        return $this->getAll("select * from `sign_student` where `room` = '".$this->deStr($room)."' AND `status` = '".$this->deStr($status)."'");
     }
     //写入学生签到信息
-    public function Signin($room,$lat,$long,$name,$number,$status,$reason=''){
+    public function Signin($room,$lat,$long,$name,$number,$status='0',$reason=''){
         if(empty($room) || empty($lat) || empty($long) || empty($name) || empty($number)){
             return false;
         }

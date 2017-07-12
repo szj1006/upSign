@@ -96,7 +96,7 @@ $(function () {
                     if (data.status == 0) {
                         swal('设置成功', '请通知学生进行签到！', 'success');
                     }else{
-                        swal('出错了...', '设置失败，请检查数据是否填写完整！', 'error');
+                        swal('设置失败', '当前教室已有老师上课，请检查教室号！', 'error');
                     }
                 },
                 error: function(){
