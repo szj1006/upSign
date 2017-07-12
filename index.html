@@ -238,8 +238,8 @@ $(function () {
         });
     });
     $("#Leave").click(function() {
-        localStorage.number = $("#number").val();
-        localStorage.name = $("#name").val();
+        localStorage.number = $("#lNumber").val();
+        localStorage.name = $("#lName").val();
         $.ajax({
             type: "post",
             url: "api.php",
@@ -255,6 +255,7 @@ $(function () {
             },
             success: function(data){
                 if (data.status == 0){
+                    $('#modal-leave').modal('hide');
                     swal('请假成功', '老师已收到您的请假信息！', 'success');
                 }else{
                     swal('请假失败', '请检查学号/姓名与请假理由是否填写！', 'error');
