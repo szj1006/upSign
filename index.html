@@ -183,7 +183,7 @@ $(function () {
         },
         add: function (e, data) {
             EXIF.getData(data.files[0], function() {
-                if(!checkExif(this) === false){
+                if(checkExif(this) === false){
                     swal('照片错误', '请上传系统相机即时拍照后的照片！', 'error');
                 }else{
                     $("#progress").css('display','block');
