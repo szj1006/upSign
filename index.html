@@ -164,7 +164,7 @@ $(function () {
         swal('定位错误', '浏览器不支持Geo Location API，请使用最新版浏览器！', 'error');
     }
     function checkExif(data) {
-        var gettime = EXIF.getTag(data, 'DateTime');
+        var gettime = EXIF.getTag(data, 'DateTimeOriginal');
         if(!gettime){ return false; }
         var datetime = gettime.split(/:| /); //年[0],月[1],日[2],时[3],分[4]
         var nowtime = new Date();
@@ -192,7 +192,7 @@ $(function () {
             });
         },
         done: function (e, data) {
-            if(data.result.status == '0'){
+            if(data.result.status == 0){
                 $('#file_name').val(data.result.file_name);
                 $('#Signin').removeAttr("disabled");
                 $("#progress").css('display','none');
