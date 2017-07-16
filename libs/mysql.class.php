@@ -46,7 +46,7 @@ class mysql{
         }
         return $this->getOne("select * from `sign_student` where `room` = '".$this->deStr($room)."' AND `number` = '".$this->deStr($number)."'");
     }
-    //调取教室信息
+    //调取教室使用信息
     public function getRoom($room,$status='0'){
         if(empty($room)){
             return false;
@@ -65,13 +65,27 @@ class mysql{
         if(empty($room) || empty($lat) || empty($long)){
             return false;
         }
-        return $this->query("insert into `".DB_NAME."`.`sign_teacher` (`room`, `lat`, `long`, `status`) values ('".$this->deStr($room)."', '".$this->deStr($lat)."', '".$this->deStr($long)."', '".$this->deStr($status)."')");
+        return $this->query("insert into `sign_teacher` (`room`, `lat`, `long`, `status`) values ('".$this->deStr($room)."', '".$this->deStr($lat)."', '".$this->deStr($long)."', '".$this->deStr($status)."')");
     }
     //写入学生签到信息
     public function Signin($room,$lat,$long,$name,$number,$status='0',$reason=''){
         if(empty($room) || empty($lat) || empty($long) || empty($name) || empty($number)){
             return false;
         }
-        return $this->query("insert into `".DB_NAME."`.`sign_student` (`room`, `lat`, `long`, `name`, `number`, `status`, `reason`) values ('".$this->deStr($room)."', '".$this->deStr($lat)."', '".$this->deStr($long)."', '".$this->deStr($name)."', '".$this->deStr($number)."', '".$this->deStr($status)."', '".$this->deStr($reason)."')");
+        return $this->query("insert into `sign_student` (`room`, `lat`, `long`, `name`, `number`, `status`, `reason`) values ('".$this->deStr($room)."', '".$this->deStr($lat)."', '".$this->deStr($long)."', '".$this->deStr($name)."', '".$this->deStr($number)."', '".$this->deStr($status)."', '".$this->deStr($reason)."')");
+    }
+    //结束教室使用状态
+    public function endSignin($room){
+        if(empty($room)){
+            return false;
+        }
+        return $this->query("update `sign_teacher` set `status`= '1' where `room` = '".$this->deStr($room)."' AND `status` = '0'");
+    }
+    //清空教室签到信息
+    public function clearSignin($room){
+        if(empty($room)){
+            return false;
+        }
+        return $this->query("delete from `sign_student` where `room` = '".$this->deStr($room)."'");
     }
 }

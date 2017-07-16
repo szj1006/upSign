@@ -193,7 +193,8 @@ $(function () {
                 },
                 success: function(data){
                     if (data.status == 0) {
-                        swal('结束成功', '本次签到已完成！', 'success');
+                        swal('结束成功', '本次签到已完成，3秒后返回首页！', 'success');
+                        setTimeout('reload()',3000);
                     }else{
                         swal('结束失败', '请检查是否存在当前教室！', 'error');
                     }
@@ -218,19 +219,21 @@ function refresh() {
                 App.blocks('#table-refresh', 'state_normal');
                 if (data.status == 1) {
                     swal('获取数据失败', '请检查是否存在当前教室！', 'error');
+                }else if(data.status == 2){
+                    swal('获取数据失败', '当前尚未有学生进行签到！', 'error');
                 }else{
-                        $("tbody").html('');
-                        $.each(data, function(i, field){
-                            if(field['status']==1){
-                                var status = '<a class="label label-danger" href="javascript:showReason(\'请假理由：'+field['reason']+'\')">已请假</a>';
-                            }else{
-                                var status = '<span class="label label-success">已签到</span>';
-                            }
-                            var newRow = '<tr><td>'+i+'</td><td>'+field['name']+'</td><td>'+field['number']+'</td><td>'+status+'</td><td class="hidden-xs">'+field['time']+'</td></tr>';
-                            $("tbody").append(newRow);
-                            $("#sign").text($('.label-success').length);
-                            $("#leave").text($('.label-danger').length);
-                        });
+                    $("tbody").html('');
+                    $.each(data, function(i, field){
+                        if(field['status']==1){
+                            var status = '<a class="label label-danger" href="javascript:showReason(\'请假理由：'+field['reason']+'\')">已请假</a>';
+                        }else{
+                            var status = '<span class="label label-success">已签到</span>';
+                        }
+                        var newRow = '<tr><td>'+i+'</td><td>'+field['name']+'</td><td>'+field['number']+'</td><td>'+status+'</td><td class="hidden-xs">'+field['time']+'</td></tr>';
+                        $("tbody").append(newRow);
+                        $("#sign").text($('.label-success').length);
+                        $("#leave").text($('.label-danger').length);
+                    });
                 }
             },
             error: function(){
@@ -239,21 +242,28 @@ function refresh() {
             }
     });
 }
-function count(o){
-        var t = typeof o;
-        if(t == 'string'){
-                return o.length;
-        }else if(t == 'object'){
-                var n = 0;
-                for(var i in o){
-                        n++;
-                }
-                return n;
+function download() {
+	var room = $("#room").val();
+    window.open("api.php?action=download&room=" + room);
+}
+function count(o) {
+    var t = typeof o;
+    if(t == 'string'){
+        return o.length;
+    }else if(t == 'object'){
+        var n = 0;
+        for(var i in o){
+            n++;
         }
-        return false;
+        return n;
+    }
+    return false;
 }
 function showReason(reason) {
     swal(reason);
+}
+function reload() {
+   window.location.reload();
 }
     </script>
 </body>

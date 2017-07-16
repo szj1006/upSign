@@ -5,12 +5,13 @@ include 'conn.php';
 include 'libs/mysql.class.php';
 include 'libs/AipFace.php';
 include 'libs/distance.function.php';
+include 'libs/export.function.php';
 
 $M = new mysql();
 $M->connect(DB_HOST,DB_USER,DB_PASS,DB_NAME);
 $aipFace = new AipFace(APP_ID, API_KEY, SECRET_KEY);
 
-switch (isset($_POST['action'])?$_POST['action']:null) {
+switch (isset($_REQUEST['action'])?$_REQUEST['action']:null) {
     //设置签到
     case 'setSignin':
         $room = isset($_POST['room'])?$_POST['room']:null; //教室号
@@ -27,10 +28,14 @@ switch (isset($_POST['action'])?$_POST['action']:null) {
     case 'endSignin':
         $room = isset($_POST['room'])?$_POST['room']:null; //教室号
         if($M->getRoom($room)){
-            echo '{"status":"1"}';
+            if($M->endSignin($room)){
+                $result = $M->clearSignin($room);
+                echo $result ? '{"status":"0"}':'{"status":"1"}';
+            }else{
+                echo '{"status":"1"}';
+            }
         }else{
-            $result = $M->setSignin($room,$lat,$long);
-            echo $result ? '{"status":"0"}':'{"status":"1"}';
+            echo '{"status":"1"}';
         }
         break;
     //签到信息
@@ -40,7 +45,28 @@ switch (isset($_POST['action'])?$_POST['action']:null) {
             echo '{"status":"1"}';
         }else{
             $result = $M->getSignin($room);
-            echo $result ? json_encode($result):'{"status":"1"}';
+            echo $result ? json_encode($result):'{"status":"2"}';
+        }
+        break;
+    //导出签到信息
+    case 'download':
+        $room = isset($_GET['room'])?$_GET['room']:null; //教室号
+        if(!$M->getRoom($room)){
+            echo '下载失败，当前教室不存在！';
+            header('refresh:1;url=teacher.html');
+        }else{
+            $result = $M->getSignin($room);
+            $str = iconv('UTF-8','GB2312//IGNORE',"姓名,学号,签到状态,请假理由,签到时间\n");   
+            while($result){
+                $name = iconv('UTF-8','GB2312//IGNORE',$result['name']);
+                $number = iconv('UTF-8','GB2312//IGNORE',$result['number']);
+                $status = iconv('UTF-8','GB2312//IGNORE',$result['status']);
+                $reason = iconv('UTF-8','GB2312//IGNORE',$result['reason']);
+                $time = iconv('UTF-8','GB2312//IGNORE',$result['time']);
+                $str .= $name.",".$number.",".$status.",".$reason.",".$time."\n";
+            }
+            $filename = $room.'Room-'.date('Ymd').'.csv';
+            export_csv($filename,$str);
         }
         break;
     //人脸注册
@@ -54,7 +80,7 @@ switch (isset($_POST['action'])?$_POST['action']:null) {
         $dir = "uploads/".$face_name;
         move_uploaded_file($face_tmp,$dir);
         $result = $aipFace->addUser($number,$name,'student',file_get_contents($dir));
-        if(array_key_exists('error_code',$result)){echo '人脸注册失败，请将信息填写完整！';header('refresh:1;url=face.php');}else{echo '人脸注册成功！';header('refresh:0.5;url=face.php');}
+        if(array_key_exists('error_code',$result)){echo '人脸注册失败，请将信息填写完整！';header('refresh:1;url=face.html');}else{echo '人脸注册成功！';header('refresh:0.5;url=face.html');}
         break;
     //人脸上传
     case 'identifyFace':
