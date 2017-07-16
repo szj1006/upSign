@@ -56,14 +56,13 @@ switch (isset($_REQUEST['action'])?$_REQUEST['action']:null) {
             header('refresh:1;url=teacher.html');
         }else{
             $result = $M->getSignin($room);
-            $str = iconv('UTF-8','GB2312//IGNORE',"姓名,学号,签到状态,请假理由,签到时间\n");   
-            while($result){
-                $name = iconv('UTF-8','GB2312//IGNORE',$result['name']);
-                $number = iconv('UTF-8','GB2312//IGNORE',$result['number']);
-                $status = iconv('UTF-8','GB2312//IGNORE',$result['status']);
-                $reason = iconv('UTF-8','GB2312//IGNORE',$result['reason']);
-                $time = iconv('UTF-8','GB2312//IGNORE',$result['time']);
-                $str .= $name.",".$number.",".$status.",".$reason.",".$time."\n";
+            $str = iconv('UTF-8','GB2312//IGNORE',"姓名,学号,签到状态,请假理由,签到时间\n");
+            foreach ($result as $key => $value) {
+                $name = iconv('UTF-8','GB2312//IGNORE',$value['name']);
+                $number = iconv('UTF-8','GB2312//IGNORE',$value['number']);
+                $status = iconv('UTF-8','GB2312//IGNORE',$value['status']?'已请假':'已签到');
+                $reason = iconv('UTF-8','GB2312//IGNORE',$value['reason']);
+                $str .= $name.",\t".$number.",".$status.",".$reason.",".$value['time']."\n";
             }
             $filename = $room.'Room-'.date('Ymd').'.csv';
             export_csv($filename,$str);
