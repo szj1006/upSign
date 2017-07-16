@@ -26,7 +26,7 @@ class AipFace extends AipBase{
      * face detect api Url
      * @var string
      */
-    private $detectUrl = 'https://aip.baidubce.com/rest/2.0/face/v1/detect';
+    private $detectUrl = 'https://aip.baidubce.com/rest/2.0/vis-faceattribute/v1/faceattribute';
 
     /**
      * match users api url

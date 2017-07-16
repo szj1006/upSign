@@ -15,8 +15,8 @@
     <div class="block">
         <div class="block-content block-content-full text-center bg-image" style="background-image: url('statics/img/photo1.jpg');">
           <span class="btn fileinput-button">
-            <img class="img-avatar img-avatar96 img-avatar-thumb" src="statics/img/avatar.jpg" id="avatar" alt="自拍头像">
-            <input id="fileupload" type="file" name="file[]" accept="image/*;capture=camera" multiple>
+            <img class="img-avatar img-avatar96 img-avatar-thumb" style="-webkit-animation: fa-spin 3s infinite linear;animation: fa-spin 3s infinite linear;" src="statics/img/avatar.jpg" id="avatar" alt="自拍头像">
+            <input id="fileupload" type="file" name="file[]" accept="image/*" multiple>
           <h3 class="h1 font-w400 text-white">上传自拍</h3>
           <div class="font-w300 text-white">请用系统自带相机拍照上传</div>
           </span>
@@ -133,6 +133,24 @@
     <script src="statics/js/plugins/sweetalert2/sweetalert2.min.js"></script>
     <script src="statics/js/plugins/exif.js"></script>
     <script>
+function checkExif(data) {
+    var gettime = EXIF.getTag(data, 'DateTimeOriginal')?EXIF.getTag(data, 'DateTimeOriginal'):EXIF.getTag(data, 'DateTime');
+    if(!gettime){ return false; }
+    var datetime = gettime.split(/:| /); //年[0],月[1],日[2],时[3],分[4]
+    var nowtime = new Date();
+    var year = nowtime.getFullYear().toString();
+    var month = nowtime.getMonth()+1<10?'0'+(nowtime.getMonth()+1):nowtime.getMonth()+1;
+    var date = nowtime.getDate().toString();
+    var hours = nowtime.getHours().toString();
+    var minutes = nowtime.getMinutes().toString();
+    var between = Math.abs(minutes-datetime[4]).toString();
+    if (datetime[0] == year && datetime[1] == month && datetime[2] == date && datetime[3] == hours && 0<=between && between<=1) {
+        return true;
+    }else{
+        alert(datetime);
+        return false;
+    }
+}
 $(function () {
     var lsNumber = $('#number').val();
     var lsName = $('#name').val();
@@ -163,18 +181,6 @@ $(function () {
     }else{
         swal('定位错误', '浏览器不支持Geo Location API，请使用最新版浏览器！', 'error');
     }
-    function checkExif(data) {
-        var gettime = EXIF.getTag(data, 'DateTimeOriginal');
-        if(!gettime){ return false; }
-        var datetime = gettime.split(/:| /); //年[0],月[1],日[2],时[3],分[4]
-        var nowtime = new Date();
-        var year = nowtime.getFullYear();
-        var month = nowtime.getMonth()+1<10?'0'+(nowtime.getMonth()+1):nowtime.getMonth()+1;
-        var date = nowtime.getDate();
-        var hours = nowtime.getHours();
-        var minutes = nowtime.getMinutes();
-        if (datetime[0] !== year && datetime[1] !== Boolean(month) && datetime[2] !== date && datetime[3] !== hours && 0>=Math.abs(minutes-datetime[4])<1) { return false; }
-    }
     $('#fileupload').fileupload({
         url: 'api.php',
         dataType: 'json',
@@ -196,7 +202,7 @@ $(function () {
                 $('#file_name').val(data.result.file_name);
                 $('#Signin').removeAttr("disabled");
                 $("#progress").css('display','none');
-                $("#avatar").attr('src','uploads/' + data.result.file_name);
+                $("#avatar").attr('src',data.result.file_name);
                 swal('上传成功', '请填写教室号/学号与姓名进行签到！', 'success');
             }else{
                 swal('网络错误', '请刷新页面后进行重试！', 'error');

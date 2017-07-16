@@ -1,6 +1,6 @@
 <?php
 header('Content-type: application/json; charset=utf-8');
-//error_reporting(0);
+error_reporting(0);
 include 'conn.php';
 include 'libs/mysql.class.php';
 include 'libs/AipFace.php';
@@ -70,26 +70,22 @@ switch (isset($_REQUEST['action'])?$_REQUEST['action']:null) {
         break;
     //人脸注册
     case 'addFace':
-        $random = time().mt_rand(1111,9999);
-        $number = isset($_POST['number'])?$_POST['number']:null; //学号
         $name = isset($_POST['name'])?$_POST['name']:null; //姓名
-        $utf8_name = iconv("UTF-8","GB2312//IGNORE", $_FILES["file"]["name"][0]);
-        $face_name = $random.$utf8_name; //文件名
-        $face_tmp = isset($_FILES["file"]["tmp_name"])?$_FILES["file"]["tmp_name"]:null;
-        $dir = "uploads/".$face_name;
-        move_uploaded_file($face_tmp,$dir);
-        $result = $aipFace->addUser($number,$name,'student',file_get_contents($dir));
+        $number = isset($_POST['number'])?$_POST['number']:null; //学号
+        $random = time().mt_rand(1111,9999);
+        $face_tmp = isset($_FILES["file"]["tmp_name"][0])?$_FILES["file"]["tmp_name"][0]:null;
+        $file_name = "uploads/".$random.".jpg";
+        move_uploaded_file($face_tmp,$file_name);
+        $result = $aipFace->addUser($number,$name,'student',file_get_contents($file_name));
         if(array_key_exists('error_code',$result)){echo '人脸注册失败，请将信息填写完整！';header('refresh:1;url=face.html');}else{echo '人脸注册成功！';header('refresh:0.5;url=face.html');}
         break;
     //人脸上传
     case 'identifyFace':
         $random = time().mt_rand(1111,9999);
-        $utf8_name = iconv("UTF-8","GB2312//IGNORE", $_FILES["file"]["name"][0]);
-        $face_name = $random.$utf8_name; //文件名
         $face_tmp = isset($_FILES["file"]["tmp_name"][0])?$_FILES["file"]["tmp_name"][0]:null;
-        $dir = "uploads/".$face_name;
-        $status = move_uploaded_file($face_tmp,$dir);
-        if($status){echo '{"status":"0","file_name":"'.iconv("GB2312//IGNORE","UTF-8", $face_name).'"}';}else{echo '{"status":"1"}';}
+        $file_name = "uploads/".$random.".jpg";
+        $status = move_uploaded_file($face_tmp,$file_name);
+        if($status){echo '{"status":"0","file_name":"'.$file_name.'"}';}else{echo '{"status":"1"}';}
         break;
     //提交签到
     case 'Signin':

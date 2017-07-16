@@ -17,20 +17,20 @@
             <div class="font-w300 text-white">请上传清晰的自拍照片进行人脸注册</div>
         </div>
         <div class="block-content block-content-full">
-            <input type="hidden" name="action" value="addFace" />
             <form class="form-horizontal" action="api.php" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="action" value="addFace" />
                 <div class="form-group">
                     <div class="col-md-12">
                         <label for="name">姓名</label>
-                        <input class="form-control" type="text" id="name" name="name" placeholder="请输入所在教室号...">
+                        <input class="form-control" type="text" id="name" name="name" placeholder="请输入姓名...">
                     </div>
                     <div class="col-md-12">
                         <label for="number">学号</label>
-                        <input class="form-control" type="text" id="number" name="number" placeholder="请输入所在教室号...">
+                        <input class="form-control" type="text" id="number" name="number" placeholder="请输入学号...">
                     </div>
                     <div class="col-md-12">
                         <label for="face">自拍</label>
-                        <input class="form-control" type="file" id="face" name="face" accept="image/*;capture=camera">
+                        <input class="form-control" type="file" name="file[]" accept="image/*;capture=camera">
                     </div>
                 </div>
                 <div class="form-group">

@@ -65,7 +65,7 @@ class AipBase {
         $this->secretKey = trim($secretKey);
         $this->isCloudUser = null;
         $this->client = new AipHttpClient();
-        $this->version = '1_3_4';
+        $this->version = '1_5_0';
     }
 
     /**
@@ -90,7 +90,7 @@ class AipBase {
      * @param  mixed $data
      * @return mixed
      */
-    protected function request($url, $data){
+    protected function request($url, $data, $headers=array()){
         try{
             $result = $this->validate($url, $data);
             if($result !== true){
@@ -102,7 +102,7 @@ class AipBase {
                 'aipSdkVersion' => $this->version,
             );
             $authObj = $this->auth();
-            $headers = $this->getAuthHeaders('POST', $url, $params);
+            $headers = $this->getAuthHeaders('POST', $url, $params, $headers);
 
             if($this->isCloudUser === false){
                 $params['access_token'] = $authObj['access_token'];
@@ -293,21 +293,27 @@ class AipBase {
      * @param  array $param 参数
      * @return array
      */
-    private function getAuthHeaders($method, $url, $params=array()){
+    private function getAuthHeaders($method, $url, $params=array(), $headers=array()){
         
         //不是云的老用户则不用在header中签名 认证
         if($this->isCloudUser === false){
-            return array();
+            return $headers;
         }
 
         $obj = parse_url($url);
+        if(!empty($obj['query'])){        
+            foreach(explode('&', $obj['query']) as $kv){
+                if(!empty($kv)){
+                    list($k, $v) = explode('=', $kv, 2);
+                    $params[$k] = $v;
+                }
+            }
+        }
+
         //UTC 时间戳
         $timestamp = gmdate('Y-m-d\TH:i:s\Z');
-        $headers = array(
-            'Host' => isset($obj['port']) ? sprintf('%s:%s', $obj['host'], $obj['port']) : $obj['host'],
-            'x-bce-date' => $timestamp,
-            'accept' => '*/*',
-        );
+        $headers['Host'] = isset($obj['port']) ? sprintf('%s:%s', $obj['host'], $obj['port']) : $obj['host'];
+        $headers['x-bce-date'] = $timestamp;
 
         //签名
         $headers['authorization'] = AipSampleSigner::sign(array(
@@ -315,9 +321,7 @@ class AipBase {
             'sk' => $this->secretKey,
         ), $method, $obj['path'], $headers, $params, array(
             'timestamp' => $timestamp,
-            'headersToSign' => array(
-                'host',
-            ),
+            'headersToSign' => array_keys($headers),
         ));
 
         return $headers;

@@ -220,7 +220,7 @@ function refresh() {
                 if (data.status == 1) {
                     swal('获取数据失败', '请检查是否存在当前教室！', 'error');
                 }else if(data.status == 2){
-                    swal('获取数据失败', '当前尚未有学生进行签到！', 'error');
+                    swal('没有数据', '当前尚未有学生进行签到！', 'success');
                 }else{
                     $("tbody").html('');
                     $.each(data, function(i, field){
