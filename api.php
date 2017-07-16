@@ -95,16 +95,15 @@ switch (isset($_REQUEST['action'])?$_REQUEST['action']:null) {
         $file_name = isset($_POST['file_name'])?$_POST['file_name']:null; //文件名
         $slat = isset($_POST['lat'])?$_POST['lat']:null; //纬度
         $slong = isset($_POST['long'])?$_POST['long']:null; //经度
-        $dir = "uploads/".iconv("UTF-8","GB2312//IGNORE", $file_name);
         if($M->getRoom($room)){
             if($M->checkSign($room,$number)){
                 echo '{"status":"3"}';
             }else{
-                $result = $aipFace->identifyUser('student',file_get_contents($dir));
+                $result = $aipFace->identifyUser('student',file_get_contents($file_name));
                 if(array_key_exists('error_code',$result)){
                     echo '{"status":"1"}';
                 }else{
-                    if($result['result'][0]['uid'] == $number && $result['result'][0]['user_info'] == $name){
+                    if($result['result'][0]['uid'] == $number){
                         $getRoom = $M->getRoom($room);
                         if($getRoom){
                             $tlat = $getRoom['lat'];
