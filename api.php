@@ -113,10 +113,10 @@ switch (isset($_REQUEST['action'])?$_REQUEST['action']:null) {
                                 $signin = $M->Signin($room,$tlat,$tlong,$name,$number);
                                 echo $signin ? '{"status":"0","scores":"'.$result['result'][0]['scores'][0].'"}':'{"status":"1"}';
                             }else{
-                                echo '{"status":"1"}';
+                                echo '{"status":"2"}';
                             }
                         }else{
-                            echo '{"status":"1"}';
+                            echo '{"status":"4"}';
                         }
                     }else{
                         echo '{"status":"1"}';

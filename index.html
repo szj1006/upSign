@@ -236,12 +236,14 @@ $(function () {
                 App.loader('hide');
                 if (data.status == 0){
                     swal('签到成功', '本次人脸评分为：' + data.scores, 'success');
+                }else if(data.status == 2){
+                    swal('签到失败', '您与教室距离有些远，请到达教室进行签到！', 'error');
                 }else if(data.status == 3){
                     swal('签到失败', '您已成功签到，请不要重复签到！', 'error');
                 }else if(data.status == 4){
                     swal('签到失败', '当前教室并未开启签到，请检查教室号！', 'error');
                 }else{
-                    swal('签到失败', '请检查教室号和所在位置与学号/姓名/自拍是否为本人！', 'error');
+                    swal('签到失败', '请检查学号/姓名/自拍是否为本人！', 'error');
                 }
             },
             error: function(){
