@@ -54,11 +54,11 @@ class mysql{
         return $this->getOne("select * from `sign_teacher` where `room` = '".$this->deStr($room)."' AND `status` = '".$this->deStr($status)."'");
     }
     //调取学生签到情况
-    public function getSignin($room,$status='0'){
+    public function getSignin($room){
         if(empty($room)){
             return false;
         }
-        return $this->getAll("select * from `sign_student` where `room` = '".$this->deStr($room)."' AND `status` = '".$this->deStr($status)."'");
+        return $this->getAll("select * from `sign_student` where `room` = '".$this->deStr($room)."'");
     }
     //设置教师端信息
     public function setSignin($room,$lat,$long,$status='0'){

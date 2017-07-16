@@ -23,8 +23,25 @@ switch (isset($_POST['action'])?$_POST['action']:null) {
             echo $result ? '{"status":"0"}':'{"status":"1"}';
         }
         break;
+    //结束签到
+    case 'endSignin':
+        $room = isset($_POST['room'])?$_POST['room']:null; //教室号
+        if($M->getRoom($room)){
+            echo '{"status":"1"}';
+        }else{
+            $result = $M->setSignin($room,$lat,$long);
+            echo $result ? '{"status":"0"}':'{"status":"1"}';
+        }
+        break;
     //签到信息
     case 'getSignin':
+        $room = isset($_POST['room'])?$_POST['room']:null; //教室号
+        if(!$M->getRoom($room)){
+            echo '{"status":"1"}';
+        }else{
+            $result = $M->getSignin($room);
+            echo $result ? json_encode($result):'{"status":"1"}';
+        }
         break;
     //人脸注册
     case 'addFace':
@@ -102,7 +119,7 @@ switch (isset($_POST['action'])?$_POST['action']:null) {
             if($M->checkSign($room,$number)){
                 echo '{"status":"3"}';
             }else{
-                $leave = $M->Signin($room,$lat,$long,$name,$number,'1',iconv("UTF-8","GB2312//IGNORE", $reason));
+                $leave = $M->Signin($room,$lat,$long,$name,$number,'1',$reason);
                 echo $leave ? '{"status":"0"}':'{"status":"1"}';
             }
         }else{

@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=0">
     <link href="statics/css/bootstrap.min.css" rel="stylesheet">
     <link href="statics/css/jquery.fileupload.css" rel="stylesheet">
-    <link href="statics/css/oneui.min.css" id="css-main" rel="stylesheet">
+    <link href="statics/css/oneui.css" id="css-main" rel="stylesheet">
     <link href="statics/css/style.css" rel="stylesheet">
     <link href="statics/js/plugins/sweetalert2/sweetalert2.min.css" rel="stylesheet">
 </head>
@@ -18,27 +18,97 @@
             <h3 class="h1 font-w400 text-white">教师端</h3>
             <div class="font-w300 text-white">请教师开启GPS定位功能后设置签到</div>
         </div>
-        <div class="block-content block-content-full">
-            <div class="form-horizontal">
-                <div class="form-group">
-                    <div class="col-md-12">
-                        <label for="room">教室号</label>
-                        <input class="form-control" type="text" id="room" name="room" placeholder="请输入所在教室号...">
+        <div class="block-content-full">
+            <div class="block block-opt-refresh-icon4" id="table-refresh">
+                <ul class="nav nav-tabs nav-justified">
+                    <li class="active">
+                        <a href="#sign-setting" id="setting" data-toggle="tab">签到设置</a>
+                    </li>
+                    <li>
+                        <a href="#sign-report" id="report" data-toggle="tab">签到报表</a>
+                    </li>
+                </ul>
+                <div class="block-content tab-content">
+                    <div class="tab-pane fade in active" id="sign-setting">
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <label for="room">教室号</label>
+                                    <input class="form-control" type="text" id="room" name="room" placeholder="请输入所在教室号...">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-xs-6">
+                                    <label for="lat">纬度</label>
+                                    <input class="form-control" type="text" id="lat" name="lat" disabled>
+                                </div>
+                                <div class="col-xs-6">
+                                    <label for="long">经度</label>
+                                    <input class="form-control" type="text" id="long" name="long" disabled>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-xs-12">
+                                    <button class="btn btn-lg btn-block btn-success" type="submit" id="setSignin">开始签到</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-xs-6">
-                        <label for="lat">纬度</label>
-                        <input class="form-control" type="text" id="lat" name="lat" disabled>
-                    </div>
-                    <div class="col-xs-6">
-                        <label for="long">经度</label>
-                        <input class="form-control" type="text" id="long" name="long" disabled>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-xs-12">
-                        <button class="btn btn-lg btn-block btn-success" type="submit" id="setSignin">设置签到</button>
+                    <div class="tab-pane fade push-50" id="sign-report">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <a class="block block-link-hover2" href="javascript:void(0)">
+                                    <div class="block-content block-content-full bg-success clearfix">
+                                        <i class="si si-users fa-2x text-white pull-right"></i>
+                                        <span class="h4 font-w700 text-white" id="sign">0</span> <span class="h4 text-white-op">位学生已签到</span>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-md-3">
+                                <a class="block block-link-hover2" href="javascript:void(0)">
+                                    <div class="block-content block-content-full bg-city clearfix">
+                                        <i class="si si-users fa-2x text-white pull-right"></i>
+                                        <span class="h4 font-w700 text-white" id="leave">0</span> <span class="h4 text-white-op">位学生已请假</span>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-md-2 col-xs-6">
+                                <a class="block block-link-hover2" href="javascript:refresh()">
+                                    <div class="block-content block-content-full bg-flat clearfix">
+                                        <i class="si si-refresh fa-2x text-white pull-right"></i>
+                                        <span class="h4 text-white-op">刷新报表</span>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-md-2 col-xs-6">
+                                <a class="block block-link-hover2" href="javascript:download()">
+                                    <div class="block-content block-content-full bg-primary clearfix">
+                                        <i class="si si-cloud-download fa-2x text-white pull-right"></i>
+                                        <span class="h4 text-white-op">下载报表</span>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-md-2 col-xs-12">
+                                <a class="block block-link-hover2" href="javascript:void(0)" id="endSignin">
+                                    <div class="block-content block-content-full bg-warning clearfix">
+                                        <i class="fa fa-sign-out fa-2x text-white pull-right"></i>
+                                        <span class="h4 text-white-op">结束签到</span>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>姓名</th>
+                                    <th>学号</th>
+                                    <th>状态</th>
+                                    <th class="hidden-xs">签到时间</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -94,9 +164,38 @@ $(function () {
                 },
                 success: function(data){
                     if (data.status == 0) {
+                        $("#room").attr("disabled",true);
+                        $("#setSignin").attr("disabled",true);
+                        $("#report").tab('show');
                         swal('设置成功', '请通知学生进行签到！', 'success');
+                        refresh();
                     }else{
-                        swal('设置失败', '当前教室已有老师上课，请检查教室号！', 'error');
+                        $("#room").attr("disabled",true);
+                        $("#setSignin").attr("disabled",true);
+                        $("#report").tab('show');
+                        swal('设置失败', '当前教室已有老师上课，您已进入签到报表！', 'error');
+                        refresh();
+                    }
+                },
+                error: function(){
+                    swal('网络错误', '网络错误，请稍后再试！', 'error');
+                }
+        });
+    });
+    $("#endSignin").click(function() {
+        $.ajax({
+                type: "post",
+                url: "api.php",
+                dataType: "json",
+                data: {
+                    action: "endSignin",
+                    room: $("#room").val()
+                },
+                success: function(data){
+                    if (data.status == 0) {
+                        swal('结束成功', '本次签到已完成！', 'success');
+                    }else{
+                        swal('结束失败', '请检查是否存在当前教室！', 'error');
                     }
                 },
                 error: function(){
@@ -105,6 +204,57 @@ $(function () {
         });
     });
 });
+function refresh() {
+    App.blocks('#table-refresh', 'state_loading');
+    $.ajax({
+            type: "post",
+            url: "api.php",
+            dataType: "json",
+            data: {
+                action: "getSignin",
+                room: $("#room").val()
+            },
+            success: function(data){
+                App.blocks('#table-refresh', 'state_normal');
+                if (data.status == 1) {
+                    swal('获取数据失败', '请检查是否存在当前教室！', 'error');
+                }else{
+                        $("tbody").html('');
+                        $.each(data, function(i, field){
+                            if(field['status']==1){
+                                var status = '<a class="label label-danger" href="javascript:showReason(\'请假理由：'+field['reason']+'\')">已请假</a>';
+                            }else{
+                                var status = '<span class="label label-success">已签到</span>';
+                            }
+                            var newRow = '<tr><td>'+i+'</td><td>'+field['name']+'</td><td>'+field['number']+'</td><td>'+status+'</td><td class="hidden-xs">'+field['time']+'</td></tr>';
+                            $("tbody").append(newRow);
+                            $("#sign").text($('.label-success').length);
+                            $("#leave").text($('.label-danger').length);
+                        });
+                }
+            },
+            error: function(){
+                App.blocks('#table-refresh', 'state_normal');
+                swal('网络错误', '网络错误，请稍后再试！', 'error');
+            }
+    });
+}
+function count(o){
+        var t = typeof o;
+        if(t == 'string'){
+                return o.length;
+        }else if(t == 'object'){
+                var n = 0;
+                for(var i in o){
+                        n++;
+                }
+                return n;
+        }
+        return false;
+}
+function showReason(reason) {
+    swal(reason);
+}
     </script>
 </body>
 </html>
