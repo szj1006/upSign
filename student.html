@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <title>学生端 - 上上签</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=0">
+    <link href="statics/css/bootstrap.min.css" rel="stylesheet">
+    <link href="statics/css/jquery.fileupload.css" rel="stylesheet">
+    <link href="statics/css/oneui.min.css" id="css-main" rel="stylesheet">
+    <link href="statics/css/style.css" rel="stylesheet">
+    <link href="statics/js/plugins/sweetalert2/sweetalert2.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <div class="block">
+        <div class="block-content block-content-full text-center bg-image" style="background-image: url('statics/img/photo1.jpg');">
+          <span class="btn fileinput-button">
+            <img class="img-avatar img-avatar96 img-avatar-thumb" style="-webkit-animation: fa-spin 3s infinite linear;animation: fa-spin 3s infinite linear;" src="statics/img/avatar.jpg" id="avatar" alt="自拍头像">
+            <input id="fileupload" type="file" name="file[]" accept="image/*" multiple>
+          <h3 class="h1 font-w400 text-white">上传自拍</h3>
+          <div class="font-w300 text-white">请用系统自带相机拍照上传</div>
+          </span>
+        </div>
+        <div class="block-content block-content-full">
+            <div class="progress active" id="progress" style="display: none;">
+              <div class="progress-bar progress-bar-primary progress-bar-striped"></div>
+            </div>
+            <div class="form-horizontal">
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <label for="room">教室号</label>
+                        <input class="form-control" type="text" id="room" name="room" placeholder="请输入所在教室号...">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-6">
+                        <label for="number">学号</label>
+                        <input class="form-control" type="text" id="number" name="number" placeholder="请输入你的学号...">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="name">姓名</label>
+                        <input class="form-control" type="text" id="name" name="name" placeholder="请输入你的姓名...">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-xs-6">
+                        <label for="lat">纬度</label>
+                        <input class="form-control" type="text" id="lat" name="lat" disabled>
+                    </div>
+                    <div class="col-xs-6">
+                        <label for="long">经度</label>
+                        <input class="form-control" type="text" id="long" name="long" disabled>
+                    </div>
+                </div>
+                <input type="hidden" id="file_name" />
+                <div class="form-group">
+                    <div class="col-xs-12">
+                        <button class="btn btn-lg btn-block btn-success" type="submit" id="Signin" disabled>开始签到</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-xs-12">
+                        <button class="btn btn-lg btn-block btn-warning" data-toggle="modal" data-target="#modal-leave" type="button">我要请假</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Leave Modal -->
+    <div class="modal fade" id="modal-leave" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-popout">
+            <div class="modal-content">
+                <div class="block block-themed block-transparent remove-margin-b">
+                    <div class="block-header bg-danger">
+                        <ul class="block-options">
+                            <li>
+                                <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
+                            </li>
+                        </ul>
+                        <h3 class="block-title">我要请假</h3>
+                    </div>
+                    <div class="block-content">
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <label for="lRoom">教室号</label>
+                                    <input class="form-control" type="text" id="lRoom" name="lRoom" placeholder="请输入所在教室号...">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-6">
+                                    <label for="lNumber">学号</label>
+                                    <input class="form-control" type="text" id="lNumber" name="lNumber" placeholder="请输入你的学号...">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="lName">姓名</label>
+                                    <input class="form-control" type="text" id="lName" name="lName" placeholder="请输入你的姓名...">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <label for="reason">请假理由</label>
+                                    <textarea class="form-control" id="reason" name="reason" rows="6" placeholder="请输入你的请假理由..."></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-xs-12">
+                                    <button class="btn btn-lg btn-block btn-danger" type="submit" id="Leave">确认请假</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END Leave Modal -->
+    <footer id="page-footer" class="content-mini content-mini-full font-s12 bg-gray-lighter clearfix">
+        <div class="pull-right">
+            Crafted with <i class="fa fa-heart text-city"></i> by <a class="font-w600" href="https://sangsir.com" target="_blank">SangSir</a>
+        </div>
+        <div class="pull-left">
+            <a class="font-w600" href="https://sangsir.com" target="_blank">上上签</a> &copy; 2017 - 沐码团队
+        </div>
+    </footer>
+    <div id="page-loader"></div>
+</div>
+    <script src="statics/js/oneui.min.js"></script>
+    <script src="statics/js/core/jquery.ui.widget.js"></script>
+    <script src="statics/js/core/jquery.iframe-transport.js"></script>
+    <script src="statics/js/core/jquery.fileupload.js"></script>
+    <script src="statics/js/plugins/sweetalert2/es6-promise.auto.min.js"></script>
+    <script src="statics/js/plugins/sweetalert2/sweetalert2.min.js"></script>
+    <script src="statics/js/plugins/exif.js"></script>
+    <script>
+function checkExif(data) {
+    var gettime = EXIF.getTag(data, 'DateTimeOriginal')?EXIF.getTag(data, 'DateTimeOriginal'):EXIF.getTag(data, 'DateTime');
+    if(!gettime){ return false; }
+    var datetime = gettime.split(/:| /); //年[0],月[1],日[2],时[3],分[4]
+    var nowtime = new Date();
+    var year = nowtime.getFullYear().toString();
+    var month = nowtime.getMonth()+1<10?'0'+(nowtime.getMonth()+1):nowtime.getMonth()+1;
+    var date = nowtime.getDate().toString();
+    var hours = nowtime.getHours().toString();
+    var minutes = nowtime.getMinutes().toString();
+    var between = Math.abs(minutes-datetime[4]).toString();
+    if (datetime[0] == year && datetime[1] == month && datetime[2] == date && datetime[3] == hours && 0<=between && between<=1) {
+        return true;
+    }else{
+        return false;
+    }
+}
+$(function () {
+    var lsNumber = $('#number').val();
+    var lsName = $('#name').val();
+    if(lsNumber == 0 || lsName == 0){
+        $('#number,#lNumber').val(localStorage.number);
+        $('#name,#lName').val(localStorage.name);
+    }
+    function geo_success(position) {
+        $('#lat').val(position.coords.latitude);
+        $('#long').val(position.coords.longitude);
+    }
+    function geo_error(error) {
+        switch (error.code) {
+            case error.TIMEOUT:
+            swal('定位错误', '获取地理位置超时，请检查GPS是否开启！', 'error');
+            break;
+            case error.PERMISSION_DENIED:
+            swal('定位错误', '请允许浏览器进行地理定位，或使用系统浏览器进行签到！', 'error');
+            break;
+        };
+    }
+    if (!!navigator.geolocation) {
+        navigator.geolocation.watchPosition(geo_success, geo_error, {
+            enableHighAccuracy: true,
+            maximumAge: 30000,
+            timeout: 27000
+        });
+    }else{
+        swal('定位错误', '浏览器不支持Geo Location API，请使用最新版浏览器！', 'error');
+    }
+    $('#fileupload').fileupload({
+        url: 'api.php',
+        dataType: 'json',
+        formData: {
+            action: "identifyFace"
+        },
+        add: function (e, data) {
+            EXIF.getData(data.files[0], function() {
+                if(!checkExif(this)){
+                    swal('照片错误', '请上传系统相机即时拍照后的照片！', 'error');
+                }else{
+                    $("#progress").css('display','block');
+                    data.submit();
+                }
+            });
+        },
+        done: function (e, data) {
+            if(data.result.status == 0){
+                $('#file_name').val(data.result.file_name);
+                $('#Signin').removeAttr("disabled");
+                $("#progress").css('display','none');
+                $("#avatar").attr('src',data.result.file_name);
+                swal('上传成功', '请填写教室号/学号与姓名进行签到！', 'success');
+            }else{
+                swal('网络错误', '请刷新页面后进行重试！', 'error');
+            }
+        },
+        progressall: function (e, data) {
+             var progress = parseInt(data.loaded / data.total * 100, 10);
+            $('#progress .progress-bar').css(
+                'width',
+                 progress + '%'
+            );
+        }
+    });
+    $("#Signin").click(function() {
+        localStorage.number = $("#number").val();
+        localStorage.name = $("#name").val();
+        App.loader('show');
+        $.ajax({
+            type: "post",
+            url: "api.php",
+            dataType: "json",
+            data: {
+                action: "Signin",
+                room: $("#room").val(),
+                number: $("#number").val(),
+                name: $("#name").val(),
+                file_name: $("#file_name").val(),
+                lat: $("#lat").val(),
+                long: $("#long").val()
+            },
+            success: function(data){
+                App.loader('hide');
+                if (data.status == 0){
+                    swal('签到成功', '本次人脸评分为：' + data.scores, 'success');
+                }else if(data.status == 2){
+                    swal('签到失败', '您与教室距离有些远，请到达教室进行签到！', 'error');
+                }else if(data.status == 3){
+                    swal('签到失败', '您已成功签到，请不要重复签到！', 'error');
+                }else if(data.status == 4){
+                    swal('签到失败', '当前教室并未开启签到，请检查教室号！', 'error');
+                }else{
+                    swal('签到失败', '请检查学号/姓名/自拍是否为本人！', 'error');
+                }
+            },
+            error: function(){
+                App.loader('hide');
+                swal('网络错误', '请刷新页面后进行重试！', 'error');
+            }
+        });
+    });
+    $("#Leave").click(function() {
+        localStorage.number = $("#lNumber").val();
+        localStorage.name = $("#lName").val();
+        $.ajax({
+            type: "post",
+            url: "api.php",
+            dataType: "json",
+            data: {
+                action: "Leave",
+                room: $("#lRoom").val(),
+                number: $("#lNumber").val(),
+                name: $("#lName").val(),
+                lat: $("#lat").val(),
+                long: $("#long").val(),
+                reason: $("#reason").val()
+            },
+            success: function(data){
+                if (data.status == 0){
+                    $('#modal-leave').modal('hide');
+                    swal('请假成功', '老师已收到您的请假信息！', 'success');
+                }else if(data.status == 3){
+                    swal('请假失败', '老师已有您的签到/请假信息，请勿重复！', 'error');
+                }else if(data.status == 4){
+                    swal('请假失败', '当前教室并未开启签到，请检查教室号！', 'error');
+                }else{
+                    swal('请假失败', '请检查教室号/学号/姓名与请假理由是否填写正确！', 'error');
+                }
+            },
+            error: function(){
+                swal('网络错误', '请刷新页面后进行重试！', 'error');
+            }
+        });
+    });
+});
+    </script>
+</body>
+</html>
