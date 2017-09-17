@@ -7,8 +7,10 @@ th, td {
 }
 
 #page-loader {
-    background: url(../img/cover.png) no-repeat center center fixed;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    background-size: cover;
+    background: url(../img/cover.gif) no-repeat center center fixed;
+    background-color: #FFF;
+}
+
+#page-loader:after {
+    background-color: rgba(255, 255, 255, 0);
 }
