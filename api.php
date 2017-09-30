@@ -1,11 +1,12 @@
 <?php
-header('Content-type: application/json; charset=utf-8');
+header("Content-type: text/html; charset=utf-8");
 error_reporting(0);
 include 'conn.php';
 include 'libs/mysql.class.php';
 include 'libs/AipFace.php';
 include 'libs/distance.function.php';
 include 'libs/export.function.php';
+include 'libs/PHPExcel.class.php';
 
 $M = new mysql();
 $M->connect(DB_HOST,DB_USER,DB_PASS,DB_NAME);
@@ -17,10 +18,11 @@ switch (isset($_REQUEST['action'])?$_REQUEST['action']:null) {
         $room = isset($_POST['room'])?$_POST['room']:null; //教室号
         $lat = isset($_POST['lat'])?$_POST['lat']:null; //纬度
         $long = isset($_POST['long'])?$_POST['long']:null; //经度
+        $class = isset($_POST['class'])?$_POST['class']:null; //班级
         if($M->getRoom($room)){
             echo '{"status":"1"}';
         }else{
-            $result = $M->setSignin($room,$lat,$long);
+            $result = $M->setSignin($room,$lat,$long,$class);
             echo $result ? '{"status":"0"}':'{"status":"1"}';
         }
         break;
@@ -48,11 +50,16 @@ switch (isset($_REQUEST['action'])?$_REQUEST['action']:null) {
             echo $result ? json_encode($result):'{"status":"2"}';
         }
         break;
+    //班级列表
+    case 'getClass':
+        $result = $M->getClass();
+        echo $result ? json_encode($result,JSON_UNESCAPED_UNICODE):'{"status":"2"}';
+        break;
     //导出签到信息
     case 'download':
         $room = isset($_GET['room'])?$_GET['room']:null; //教室号
         if(!$M->getRoom($room)){
-            echo '下载失败，当前教室不存在！';
+            echo '<h2>下载失败，当前教室不存在！</h2>';
             header('refresh:1;url=teacher.html');
         }else{
             $result = $M->getSignin($room);
@@ -77,7 +84,31 @@ switch (isset($_REQUEST['action'])?$_REQUEST['action']:null) {
         $file_name = "uploads/".$random.".jpg";
         move_uploaded_file($face_tmp,$file_name);
         $result = $aipFace->addUser($number,$name,'student',file_get_contents($file_name));
-        if(array_key_exists('error_code',$result)){echo '人脸注册失败，请将信息填写完整！';header('refresh:1;url=face.html');}else{echo '人脸注册成功！';header('refresh:0.5;url=face.html');}
+        if(array_key_exists('error_code',$result)){echo '<h2>人脸注册失败，请将信息填写完整！</h2>';header('refresh:1;url=face.html');}else{echo '<h2>人脸注册成功！</h2>';header('refresh:0.5;url=face.html');}
+        break;
+    //班级导入
+    case 'importClass':
+        $random = time().mt_rand(1111,9999);
+        $face_tmp = isset($_FILES["file"]["tmp_name"][0])?$_FILES["file"]["tmp_name"][0]:null;
+        $file_name = "uploads/".$random.".xls";
+        move_uploaded_file($face_tmp,$file_name);
+        $excelReader = PHPExcel_IOFactory::createReader('Excel5');
+        try {
+            $excelLoad = $excelReader->load($file_name,$encode='utf-8');
+        }catch(Exception $e){
+            echo '<h2>导入失败！请检查Excel格式是否正确！</h2>';
+            header('refresh:1;url=teacher.html');
+            exit;
+        }
+        $sheet = $excelLoad->getSheet(0); //取得sheet(0)表
+        $highestRow = $sheet->getHighestRow(); //取得总行数
+        for($i=2; $i<=$highestRow; $i++) {
+            $number = $excelLoad->getActiveSheet()->getCell("A".$i)->getValue(); //学号
+            $name = $excelLoad->getActiveSheet()->getCell("B".$i)->getValue(); //姓名
+            $class = $excelLoad->getActiveSheet()->getCell("C".$i)->getValue(); //班级
+            $result = $M->importClass($number,$name,$class);
+        }
+        if(!$result){echo '<h2>导入失败！已有此班级或Excel格式错误！</h2>';header('refresh:1;url=teacher.html');exit;}else{echo '<h2>导入成功！</h2>';header('refresh:0.5;url=teacher.html');}
         break;
     //人脸上传
     case 'identifyFace':

@@ -38,6 +38,13 @@
                                 </div>
                             </div>
                             <div class="form-group">
+                                <div class="col-md-12">
+                                    <label for="class">上课班级</label>
+                                    <select class="form-control" id="class" name="class"></select>
+                                    <div class="help-block text-right">没找到班级？<a href="#" class="link-effect" data-toggle="modal" data-target="#modal-import" type="button">点此导入</a></div>
+                                </div>
+                            </div>
+                            <div class="form-group">
                                 <div class="col-xs-6">
                                     <label for="lat">纬度</label>
                                     <input class="form-control" type="text" id="lat" name="lat" disabled>
@@ -114,6 +121,46 @@
             </div>
         </div>
     </div>
+    <!-- Import Modal -->
+    <div class="modal fade" id="modal-import" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-popout">
+            <div class="modal-content">
+                <div class="block block-themed block-transparent remove-margin-b">
+                    <div class="block-header bg-primary">
+                        <ul class="block-options">
+                            <li>
+                                <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
+                            </li>
+                        </ul>
+                        <h3 class="block-title">导入班级花名册</h3>
+                    </div>
+                    <div class="block-content">
+                        <div class="alert alert-danger alert-dismissable">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            <p><i class="fa fa-warning"></i> 注意！请使用.xls格式的Excel文件进行导入，Excel格式如下：</p>
+                            <img src="statics/img/layout.png" height="95px" width="186px">
+                        </div>
+                        <form class="form-horizontal" action="api.php" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="action" value="importClass">
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <label for="face">班级花名册</label>
+                                    <input class="form-control" type="file" name="file[]" accept="application/vnd.ms-excel">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-xs-12">
+                                    <button class="btn btn-lg btn-block btn-primary" type="submit">点击导入</button>
+                                </div>
+                            </div>
+                        </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END Import Modal -->
     <footer id="page-footer" class="content-mini content-mini-full font-s12 bg-gray-lighter clearfix">
         <div class="pull-right">
             Crafted with <i class="fa fa-heart text-city"></i> by <a class="font-w600" href="https://sangsir.com" target="_blank">SangSir</a>
@@ -151,6 +198,27 @@ $(function () {
     }else{
         swal('定位错误', '浏览器不支持Geo Location API，请使用最新版浏览器！', 'error');
     }
+    $.ajax({
+            type: "post",
+            url: "api.php",
+            dataType: "json",
+            data: {
+                action: "getClass"
+            },
+            success: function(data){
+                if (data.status == 2) {
+                    swal('获取班级失败', '请预先导入班级花名册！', 'error');
+                }else{
+                    console.log(data);
+                    for(var i=0;i<data.length;i++){
+                        $("#class").append("<option value='"+data[i]['class']+"'>"+data[i]['class']+"</option>");
+                    }
+                }
+            },
+            error: function(){
+                swal('网络错误', '网络错误，请稍后再试！', 'error');
+            }
+    });
     $("#setSignin").click(function() {
         $.ajax({
                 type: "post",
@@ -160,11 +228,13 @@ $(function () {
                     action: "setSignin",
                     room: $("#room").val(),
                     lat: $("#lat").val(),
-                    long: $("#long").val()
+                    long: $("#long").val(),
+                    class: $("#class").val()
                 },
                 success: function(data){
                     if (data.status == 0) {
                         $("#room").attr("disabled",true);
+                        $("#class").attr("disabled",true);
                         $("#setSignin").attr("disabled",true);
                         $("#report").tab('show');
                         swal('设置成功', '请通知学生进行签到！', 'success');
@@ -243,21 +313,8 @@ function refresh() {
     });
 }
 function download() {
-	var room = $("#room").val();
+    var room = $("#room").val();
     window.open("api.php?action=download&room=" + room);
-}
-function count(o) {
-    var t = typeof o;
-    if(t == 'string'){
-        return o.length;
-    }else if(t == 'object'){
-        var n = 0;
-        for(var i in o){
-            n++;
-        }
-        return n;
-    }
-    return false;
 }
 function showReason(reason) {
     swal(reason);

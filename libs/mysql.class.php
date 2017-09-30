@@ -53,6 +53,10 @@ class mysql{
         }
         return $this->getOne("select * from `sign_teacher` where `room` = '".$this->deStr($room)."' AND `status` = '".$this->deStr($status)."'");
     }
+    //调取班级信息
+    public function getClass(){
+        return $this->getAll("select distinct class from `sign_class`");
+    }
     //调取学生签到情况
     public function getSignin($room){
         if(empty($room)){
@@ -61,11 +65,11 @@ class mysql{
         return $this->getAll("select * from `sign_student` where `room` = '".$this->deStr($room)."'");
     }
     //设置教师端信息
-    public function setSignin($room,$lat,$long,$status='0'){
-        if(empty($room) || empty($lat) || empty($long)){
+    public function setSignin($room,$lat,$long,$class,$status='0'){
+        if(empty($room) || empty($lat) || empty($long) || empty($class)){
             return false;
         }
-        return $this->query("insert into `sign_teacher` (`room`, `lat`, `long`, `status`) values ('".$this->deStr($room)."', '".$this->deStr($lat)."', '".$this->deStr($long)."', '".$this->deStr($status)."')");
+        return $this->query("insert into `sign_teacher` (`room`, `lat`, `long`, `class`, `status`) values ('".$this->deStr($room)."', '".$this->deStr($lat)."', '".$this->deStr($long)."', '".$this->deStr($class)."', '".$this->deStr($status)."')");
     }
     //写入学生签到信息
     public function Signin($room,$lat,$long,$name,$number,$status='0',$reason=''){
@@ -73,6 +77,13 @@ class mysql{
             return false;
         }
         return $this->query("insert into `sign_student` (`room`, `lat`, `long`, `name`, `number`, `status`, `reason`) values ('".$this->deStr($room)."', '".$this->deStr($lat)."', '".$this->deStr($long)."', '".$this->deStr($name)."', '".$this->deStr($number)."', '".$this->deStr($status)."', '".$this->deStr($reason)."')");
+    }
+    //写入班级花名册信息
+    public function importClass($number,$name,$class){
+        if(empty($number) || empty($name) || empty($class)){
+            return false;
+        }
+        return $this->query("insert into `sign_class` (`number`, `name`, `class`) values ('".$this->deStr($number)."', '".$this->deStr($name)."', '".$this->deStr($class)."')");
     }
     //结束教室使用状态
     public function endSignin($room){
