@@ -321,6 +321,33 @@ function getSignin() {
                 if (data.status == 1) {
                     swal('获取数据失败', '请检查是否存在当前教室！', 'error');
                 }else if(data.status == 2){
+                    var nosignTotal = $('.label-primary').length;
+                    signEcharts.setOption({
+                        title: {
+                            text: '总人数：'+ nosignTotal +'人',
+                            left: 'center'
+                        },
+                        tooltip : {
+                            trigger: 'item',
+                            formatter: "{b}：{c}人 ({d}%)"
+                        },
+                        legend: {
+                            bottom: 10,
+                            left: 'center',
+                            data: ['已签到', '未签到','已请假']
+                        },
+                        series : [
+                            {
+                                type: 'pie',
+                                radius: '55%',
+                                roseType: 'angle',
+                                data:[
+                                    {value:nosignTotal, name:'未签到'}
+                                ]
+                            }
+                        ]
+                    });
+                    signEcharts.resize();
                     swal('没有数据', '当前尚未有学生进行签到！', 'success');
                 }else{
                     $.each(data, function(i, field){
