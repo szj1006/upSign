@@ -63,39 +63,39 @@
                     </div>
                     <div class="tab-pane fade push-50" id="sign-report">
                         <div class="row">
-                            <div class="col-md-3">
-                                <a class="block block-link-hover2" href="javascript:void(0)">
-                                    <div class="block-content block-content-full bg-success clearfix">
-                                        <i class="si si-users fa-2x text-white pull-right"></i>
-                                        <span class="h4 font-w700 text-white" id="sign">0</span> <span class="h4 text-white-op">位学生已签到</span>
+                            <div class="col-md-12">
+                                <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                                  <div class="panel panel-success">
+                                    <div class="panel-heading" role="button" data-toggle="collapse" data-parent="#accordion" href="#chartModal" aria-expanded="false" aria-controls="chartModal" id="signChart">
+                                      <h4 class="panel-title"><i class="si si-pie-chart"></i> 签到图表</h4>
                                     </div>
-                                </a>
-                            </div>
-                            <div class="col-md-3">
-                                <a class="block block-link-hover2" href="javascript:void(0)">
-                                    <div class="block-content block-content-full bg-city clearfix">
-                                        <i class="si si-users fa-2x text-white pull-right"></i>
-                                        <span class="h4 font-w700 text-white" id="leave">0</span> <span class="h4 text-white-op">位学生已请假</span>
+                                    <div id="chartModal" class="panel-collapse collapse" role="tabpanel" aria-labelledby="signChart">
+                                        <div class="row">
+                                            <div class="col-md-12" align="center">
+                                                <div id="signTotalChart" style="width: 100%;height: 250px;"></div>
+                                            </div>
+                                        </div>
                                     </div>
-                                </a>
+                                  </div>
+                                </div>
                             </div>
-                            <div class="col-md-2 col-xs-6">
-                                <a class="block block-link-hover2" href="javascript:refresh()">
+                            <div class="col-md-4 col-xs-6">
+                                <a class="block block-link-hover2" href="javascript:refresh();">
                                     <div class="block-content block-content-full bg-flat clearfix">
                                         <i class="si si-refresh fa-2x text-white pull-right"></i>
                                         <span class="h4 text-white-op">刷新报表</span>
                                     </div>
                                 </a>
                             </div>
-                            <div class="col-md-2 col-xs-6">
-                                <a class="block block-link-hover2" href="javascript:download()">
+                            <div class="col-md-4 col-xs-6">
+                                <a class="block block-link-hover2" href="javascript:download();">
                                     <div class="block-content block-content-full bg-primary clearfix">
                                         <i class="si si-cloud-download fa-2x text-white pull-right"></i>
                                         <span class="h4 text-white-op">下载报表</span>
                                     </div>
                                 </a>
                             </div>
-                            <div class="col-md-2 col-xs-12">
+                            <div class="col-md-4 col-xs-12">
                                 <a class="block block-link-hover2" href="javascript:void(0)" id="endSignin">
                                     <div class="block-content block-content-full bg-warning clearfix">
                                         <i class="fa fa-sign-out fa-2x text-white pull-right"></i>
@@ -173,6 +173,8 @@
     <script src="statics/js/oneui.min.js"></script>
     <script src="statics/js/plugins/sweetalert2/es6-promise.auto.min.js"></script>
     <script src="statics/js/plugins/sweetalert2/sweetalert2.min.js"></script>
+    <script src="statics/js/plugins/echarts/echarts.common.min.js"></script>
+    <script src="statics/js/plugins/echarts/macarons.js"></script>
     <script>
 $(function () {
     function geo_success(position) {
@@ -209,7 +211,6 @@ $(function () {
                 if (data.status == 2) {
                     swal('获取班级失败', '请预先导入班级花名册！', 'error');
                 }else{
-                    console.log(data);
                     for(var i=0;i<data.length;i++){
                         $("#class").append("<option value='"+data[i]['class']+"'>"+data[i]['class']+"</option>");
                     }
@@ -239,12 +240,15 @@ $(function () {
                         $("#report").tab('show');
                         swal('设置成功', '请通知学生进行签到！', 'success');
                         refresh();
+                        signEcharts.resize();
                     }else{
                         $("#room").attr("disabled",true);
+                        $("#class").attr("disabled",true);
                         $("#setSignin").attr("disabled",true);
                         $("#report").tab('show');
                         swal('设置失败', '当前教室已有老师上课，您已进入签到报表！', 'error');
                         refresh();
+                        signEcharts.resize();
                     }
                 },
                 error: function(){
@@ -275,7 +279,34 @@ $(function () {
         });
     });
 });
-function refresh() {
+var signEcharts = echarts.init(document.getElementById('signTotalChart'), 'macarons');
+function getStudent() {
+    $.ajax({
+            type: "post",
+            url: "api.php",
+            dataType: "json",
+            data: {
+                action: "getStudent",
+                class: $("#class").val()
+            },
+            success: function(data){
+                if (data.status == 1) {
+                    swal('获取数据失败', '请检查是否存在当前班级！', 'error');
+                }else{
+                    $("tbody").html('');
+                    $.each(data, function(i, data){
+                        var status = '<span class="label label-primary">未签到</span>';
+                        var newRow = '<tr><td>'+i+'</td><td>'+data['name']+'</td><td>'+data['number']+'</td><td id="'+data['name']+'-status">'+status+'</td><td id="'+data['name']+'-time" class="hidden-xs"></td></tr>';
+                        $("tbody").append(newRow);
+                    });
+                }
+            },
+            error: function(){
+                swal('网络错误', '网络错误，请稍后再试！', 'error');
+            }
+    });
+}
+function getSignin() {
     App.blocks('#table-refresh', 'state_loading');
     $.ajax({
             type: "post",
@@ -292,17 +323,45 @@ function refresh() {
                 }else if(data.status == 2){
                     swal('没有数据', '当前尚未有学生进行签到！', 'success');
                 }else{
-                    $("tbody").html('');
                     $.each(data, function(i, field){
                         if(field['status']==1){
                             var status = '<a class="label label-danger" href="javascript:showReason(\'请假理由：'+field['reason']+'\')">已请假</a>';
                         }else{
                             var status = '<span class="label label-success">已签到</span>';
                         }
-                        var newRow = '<tr><td>'+i+'</td><td>'+field['name']+'</td><td>'+field['number']+'</td><td>'+status+'</td><td class="hidden-xs">'+field['time']+'</td></tr>';
-                        $("tbody").append(newRow);
-                        $("#sign").text($('.label-success').length);
-                        $("#leave").text($('.label-danger').length);
+                        $("#"+field['name']+"-status").html(status);
+                        $("#"+field['name']+"-time").text(field['time']);
+                        var leaveTotal = $('.label-danger').length;
+                        var signTotal = $('.label-success').length;
+                        var nosignTotal = $('.label-primary').length;
+                        signEcharts.setOption({
+                            title: {
+                                text: '总人数：'+ parseInt(signTotal + nosignTotal + leaveTotal) +'人',
+                                left: 'center'
+                            },
+                            tooltip : {
+                                trigger: 'item',
+                                formatter: "{b}：{c}人 ({d}%)"
+                            },
+                            legend: {
+                                bottom: 10,
+                                left: 'center',
+                                data: ['已签到', '未签到','已请假']
+                            },
+                            series : [
+                                {
+                                    type: 'pie',
+                                    radius: '55%',
+                                    roseType: 'angle',
+                                    data:[
+                                        {value:signTotal, name:'已签到'},
+                                        {value:nosignTotal, name:'未签到'},
+                                        {value:leaveTotal, name:'已请假'}
+                                    ]
+                                }
+                            ]
+                        });
+                       signEcharts.resize();
                     });
                 }
             },
@@ -320,8 +379,17 @@ function showReason(reason) {
     swal(reason);
 }
 function reload() {
-   window.location.reload();
+    window.location.reload();
 }
+function refresh() {
+    getStudent();
+    setTimeout(getSignin,30);
+    signEcharts.resize();
+}
+$(".panel-heading").click(function(){
+    setTimeout(signEcharts.resize,1);
+});
+window.onresize = signEcharts.resize;
     </script>
 </body>
 </html>

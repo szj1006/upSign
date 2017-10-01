@@ -57,6 +57,13 @@ class mysql{
     public function getClass(){
         return $this->getAll("select distinct class from `sign_class`");
     }
+    //调取班级学生信息
+    public function getStudent($class){
+        if(empty($class)){
+            return false;
+        }
+        return $this->getAll("select * from `sign_class` where `class` = '".$this->deStr($class)."'");
+    }
     //调取学生签到情况
     public function getSignin($room){
         if(empty($room)){

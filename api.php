@@ -40,7 +40,7 @@ switch (isset($_REQUEST['action'])?$_REQUEST['action']:null) {
             echo '{"status":"1"}';
         }
         break;
-    //签到信息
+    //获取签到信息
     case 'getSignin':
         $room = isset($_POST['room'])?$_POST['room']:null; //教室号
         if(!$M->getRoom($room)){
@@ -50,10 +50,16 @@ switch (isset($_REQUEST['action'])?$_REQUEST['action']:null) {
             echo $result ? json_encode($result):'{"status":"2"}';
         }
         break;
-    //班级列表
+    //获取班级列表
     case 'getClass':
         $result = $M->getClass();
         echo $result ? json_encode($result,JSON_UNESCAPED_UNICODE):'{"status":"2"}';
+        break;
+    //获取班级学生信息
+    case 'getStudent':
+        $class = isset($_POST['class'])?$_POST['class']:null; //教室号
+        $result = $M->getStudent($class);
+        echo $result ? json_encode($result):'{"status":"1"}';
         break;
     //导出签到信息
     case 'download':
