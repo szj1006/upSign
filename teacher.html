@@ -12,6 +12,15 @@
 </head>
 <body>
 <div class="container">
+    <header id="header-navbar" class="content-mini content-mini-full">
+        <ul class="nav-header pull-left">
+            <li>
+                <button class="btn btn-default pull-right" data-toggle="modal" data-target="#apps-modal" type="button">
+                    <i class="si si-grid"></i>
+                </button>
+            </li>
+        </ul>
+    </header>
     <div class="block">
         <div class="block-content block-content-full text-center bg-image" style="background-image: url('statics/img/photo2.jpg');">
             <img class="img-avatar img-avatar96 img-avatar-thumb" src="statics/img/avatar.jpg" id="avatar" alt="上上签">
@@ -161,6 +170,62 @@
         </div>
     </div>
     <!-- END Import Modal -->
+    <!-- Apps Modal -->
+    <div class="modal fade" id="apps-modal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-sm modal-dialog modal-dialog-popout">
+            <div class="modal-content">
+                <!-- Apps Block -->
+                <div class="block block-themed block-transparent">
+                    <div class="block-header bg-primary-dark">
+                        <ul class="block-options">
+                            <li>
+                                <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
+                            </li>
+                        </ul>
+                        <h3 class="block-title">导航栏</h3>
+                    </div>
+                    <div class="block-content">
+                        <div class="row text-center">
+                            <div class="col-xs-6">
+                                <a class="block block-rounded" href="index.html">
+                                    <div class="block-content text-white bg-primary-dark">
+                                        <i class="si si-rocket fa-2x"></i>
+                                        <div class="font-w600 push-15-t push-15">引导主页</div>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-xs-6">
+                                <a class="block block-rounded" href="face.html">
+                                    <div class="block-content text-white bg-danger">
+                                        <i class="si si-user-follow fa-2x"></i>
+                                        <div class="font-w600 push-15-t push-15">人脸注册</div>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-xs-6">
+                                <a class="block block-rounded" href="student.html">
+                                    <div class="block-content text-white bg-success">
+                                        <i class="si si-users fa-2x"></i>
+                                        <div class="font-w600 push-15-t push-15">学生端</div>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-xs-6">
+                                <a class="block block-rounded" href="teacher.html">
+                                    <div class="block-content text-white bg-info">
+                                        <i class="si si-user fa-2x"></i>
+                                        <div class="font-w600 push-15-t push-15">教师端</div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- END Apps Block -->
+            </div>
+        </div>
+    </div>
+    <!-- END Apps Modal -->
     <footer id="page-footer" class="content-mini content-mini-full font-s12 bg-gray-lighter clearfix">
         <div class="pull-right">
             Crafted with <i class="fa fa-heart text-city"></i> by <a class="font-w600" href="https://sangsir.com" target="_blank">SangSir</a>
