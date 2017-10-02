@@ -1,4 +1,4 @@
-# upSign [![Build Status](https://travis-ci.org/szj1006/upSign.svg?branch=master)](https://travis-ci.org/szj1006/upSign) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+# upSign
 
 上上签 - 基于html5的签到系统
  - 用于参加齐鲁大学生软件设计中的html5创意应用项目
