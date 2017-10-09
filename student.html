@@ -195,13 +195,13 @@ function checkExif(data) {
     if(!gettime){ return false; }
     var datetime = gettime.split(/:| /); //年[0],月[1],日[2],时[3],分[4]
     var nowtime = new Date();
-    var year = nowtime.getFullYear().toString();
-    var month = nowtime.getMonth()+1<10?'0'+(nowtime.getMonth()+1):nowtime.getMonth()+1;
-    var date = nowtime.getDate().toString();
-    var hours = nowtime.getHours().toString();
-    var minutes = nowtime.getMinutes().toString();
-    var between = Math.abs(minutes-datetime[4]).toString();
-    if (datetime[0] == year && datetime[1] == month && datetime[2] == date && datetime[3] == hours && 0<=between && between<=1) {
+    var year = nowtime.getFullYear();
+    var month = nowtime.getMonth()+1;
+    var date = nowtime.getDate();
+    var hours = nowtime.getHours();
+    var minutes = nowtime.getMinutes();
+    var between = Math.abs(minutes-datetime[4]);
+    if (parseInt(datetime[0]) == year && parseInt(datetime[1]) == month && parseInt(datetime[2]) == date && parseInt(datetime[3]) == hours && 0<=between && between<=1) {
         return true;
     }else{
         return false;
