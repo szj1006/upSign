@@ -5,7 +5,6 @@ include 'conn.php';
 include 'libs/mysql.class.php';
 include 'libs/AipFace.php';
 include 'libs/distance.function.php';
-include 'libs/export.function.php';
 include 'libs/PHPExcel.class.php';
 
 $M = new mysql();
@@ -61,26 +60,6 @@ switch (isset($_REQUEST['action'])?$_REQUEST['action']:null) {
         $result = $M->getStudent($class);
         echo $result ? json_encode($result):'{"status":"1"}';
         break;
-    //导出签到信息
-    case 'download':
-        $room = isset($_GET['room'])?$_GET['room']:null; //教室号
-        if(!$M->getRoom($room)){
-            echo '<h2>下载失败，当前教室不存在！</h2>';
-            header('refresh:1;url=teacher.html');
-        }else{
-            $result = $M->getSignin($room);
-            $str = iconv('UTF-8','GB2312//IGNORE',"姓名,学号,签到状态,请假理由,签到时间\n");
-            foreach ($result as $key => $value) {
-                $name = iconv('UTF-8','GB2312//IGNORE',$value['name']);
-                $number = iconv('UTF-8','GB2312//IGNORE',$value['number']);
-                $status = iconv('UTF-8','GB2312//IGNORE',$value['status']?'已请假':'已签到');
-                $reason = iconv('UTF-8','GB2312//IGNORE',$value['reason']);
-                $str .= $name.",\t".$number.",".$status.",".$reason.",".$value['time']."\n";
-            }
-            $filename = $room.'Room-'.date('Ymd').'.csv';
-            export_csv($filename,$str);
-        }
-        break;
     //人脸注册
     case 'addFace':
         $name = isset($_POST['name'])?$_POST['name']:null; //姓名
@@ -112,9 +91,9 @@ switch (isset($_REQUEST['action'])?$_REQUEST['action']:null) {
             $number = $excelLoad->getActiveSheet()->getCell("A".$i)->getValue(); //学号
             $name = $excelLoad->getActiveSheet()->getCell("B".$i)->getValue(); //姓名
             $class = $excelLoad->getActiveSheet()->getCell("C".$i)->getValue(); //班级
-            $result = $M->importClass($number,$name,$class);
+            $result = $M->importClass(trim($number),trim($name),trim($class));
         }
-        if(!$result){echo '<h2>导入失败！已有此班级或Excel格式错误！</h2>';header('refresh:1;url=teacher.html');exit;}else{echo '<h2>导入成功！</h2>';header('refresh:0.5;url=teacher.html');}
+        if(!$result){echo '<h2>导入完成！</h2>';header('refresh:1;url=teacher.html');exit;}else{echo '<h2>导入完成！</h2>';header('refresh:0.5;url=teacher.html');}
         break;
     //人脸上传
     case 'identifyFace':

@@ -2,49 +2,51 @@
 <html lang="zh-CN">
 <head>
     <meta charset="utf-8">
-    <title>入口 - 上上签</title>
+    <title>登录 - 上上签</title>
     <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=0">
     <link href="statics/css/bootstrap.min.css" rel="stylesheet">
-    <link href="statics/css/oneui.min.css" id="css-main" rel="stylesheet">
+    <link href="statics/css/oneui.css" id="css-main" rel="stylesheet">
     <link href="statics/css/style.css" rel="stylesheet">
+    <link href="statics/js/plugins/sweetalert2/sweetalert2.min.css" rel="stylesheet">
 </head>
 <body>
-<div class="container">
-    <div class="block">
-        <div class="block-content block-content-full">
+    <div class="bg-white pulldown">
+        <div class="content content-boxed overflow-hidden">
             <div class="row">
-                <div class="col-lg-12 text-center">
-                    <img class="img-avatar img-avatar128 img-avatar-thumb push-20" src="statics/img/logo.jpg" alt="上上签">
-                </div>
-                <div class="col-lg-12">
-                    <a class="block block-link-hover1 text-center" href="face.html">
-                        <div class="block-content block-content-full bg-danger">
-                            <i class="si si-user-follow fa-3x text-white"></i>
+                <div class="col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-4 col-lg-offset-4">
+                    <div class="push-30-t push-50 animated fadeIn">
+                        <!-- Login Title -->
+                        <div class="text-center">
+                            <i class="fa fa-2x fa-circle-o-notch text-primary"></i>
+                            <p class="text-muted push-15-t">登录教师端</p>
                         </div>
-                        <div class="block-content block-content-full bg-danger block-content-mini text-white">
-                            <h4>人脸注册 >>></h4>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-lg-12">
-                    <a class="block block-link-hover1 text-center" href="student.html">
-                        <div class="block-content block-content-full bg-success">
-                            <i class="si si-users fa-3x text-white"></i>
-                        </div>
-                        <div class="block-content block-content-full bg-success block-content-mini text-white">
-                            <h4>我是学生 >>></h4>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-lg-12">
-                    <a class="block block-link-hover1 text-center" href="teacher.html">
-                        <div class="block-content block-content-full bg-info">
-                            <i class="si si-user fa-3x text-white"></i>
-                        </div>
-                        <div class="block-content block-content-full bg-info block-content-mini text-white">
-                            <h4>我是老师 >>></h4>
-                        </div>
-                    </a>
+                        <!-- END Login Title -->
+                        <!-- Login Form -->
+                        <form class="js-validation-login form-horizontal push-30-t" onsubmit="return validate_form(this)">
+                            <div class="form-group">
+                                <div class="col-xs-12">
+                                    <div class="form-material form-material-primary floating">
+                                        <input class="form-control" type="number" id="login-id" name="login-id">
+                                        <label for="login-id">教师编号</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-xs-12">
+                                    <div class="form-material form-material-primary floating">
+                                        <input class="form-control" type="password" id="login-password" name="login-password">
+                                        <label for="login-password">密码</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group push-30-t">
+                                <div class="col-xs-12 col-sm-6 col-sm-offset-3 col-md-4 col-md-offset-4">
+                                    <button class="btn btn-sm btn-block btn-primary" type="submit">登 录</button>
+                                </div>
+                            </div>
+                        </form>
+                        <!-- END Login Form -->
+                    </div>
                 </div>
             </div>
         </div>
@@ -106,23 +108,31 @@
     </div>
     <!-- END Apps Modal -->
     <a class="float btn-primary" data-toggle="modal" data-target="#apps-modal" type="button"><i class="fa fa-align-justify my-float"></i></a>
-    <footer id="page-footer" class="content-mini content-mini-full font-s12 bg-gray-lighter clearfix">
-        <div class="pull-right">
-            Crafted with <i class="fa fa-heart text-city"></i> by <a class="font-w600" href="https://sangsir.com" target="_blank">SangSir</a>
-        </div>
-        <div class="pull-left">
-            <a class="font-w600" href="https://sangsir.com" target="_blank">上上签</a> &copy; 2017 - 沐码团队
-        </div>
-    </footer>
-</div>
     <script src="statics/js/oneui.min.js"></script>
+    <script src="statics/js/plugins/sweetalert2/es6-promise.auto.min.js"></script>
+    <script src="statics/js/plugins/sweetalert2/sweetalert2.min.js"></script>
     <script>
-    $(function () {
-        App.loader('show');
-        setTimeout(function () {
-            App.loader('hide');
-        }, 2000);
-    });
+    function validate_form(thisform) {
+        var id = document.getElementById('login-id');
+        var password = document.getElementById('login-password');
+        if(id.value == null || id.value == ""){
+            swal('登录失败', '请输入教师编号', 'error');
+            id.focus();
+            return false;
+        }
+        if(password.value == null || password.value == ""){
+           swal('登录失败', '请输入密码', 'error');
+           password.focus();
+           return false;
+        }
+        if(id.value == '111' && password.value == '111'){
+           window.location.href = "teacher.html";
+           return false;
+        }else{
+           swal('登录失败', '账号密码错误', 'error');
+           return false;
+        }
+    }
     </script>
 </body>
 </html>
