@@ -404,7 +404,6 @@ function getSignin() {
                         ]
                     });
                     signEcharts.resize();
-                    swal('没有数据', '当前尚未有学生进行签到！', 'success');
                 }else{
                     $.each(data, function(i, field){
                         if(field['status']==1){
