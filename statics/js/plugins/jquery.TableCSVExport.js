@@ -11,7 +11,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 jQuery.fn.TableCSVExport = function (options) {
     var options = jQuery.extend({
-        separator: ',',
+        separator: "\t,",
         header: [],
         columns: [],
         extraHeader: "",
