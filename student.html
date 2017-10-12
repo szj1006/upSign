@@ -16,7 +16,7 @@
         <div class="block-content block-content-full text-center bg-image" style="background-image: url('statics/img/photo1.jpg');">
           <span class="btn fileinput-button">
             <img class="img-avatar img-avatar96 img-avatar-thumb" style="-webkit-animation: fa-spin 3s infinite linear;animation: fa-spin 3s infinite linear;" src="statics/img/avatar.jpg" id="avatar" alt="自拍头像">
-            <input id="fileupload" type="file" name="file[]" accept="image/*" multiple>
+            <input id="fileupload" type="file" name="file[]" accept="image/*">
           <h3 class="h1 font-w400 text-white">上传自拍</h3>
           <div class="font-w300 text-white">请用系统自带相机拍照上传</div>
           </span>
@@ -208,6 +208,11 @@ function checkExif(data) {
     }
 }
 $(function () {
+    var u = navigator.userAgent;
+    var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Linux') > -1;
+    if (isAndroid) {
+        $('#fileupload').attr("capture","camera");
+    }
     var lsNumber = $('#number').val();
     var lsName = $('#name').val();
     if(lsNumber == 0 || lsName == 0){
