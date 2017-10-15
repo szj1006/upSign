@@ -8,10 +8,10 @@
 ---
 2017.10.15 更新：
 
- 1. 比赛结束，获得大赛命题一等奖 ([相关新闻](http://edu.dzwww.com/rcjy/qzgl/201710/t20171015_16536302.htm))
+ 1. 比赛结束，获得<font color="red">大赛命题一等奖</font> ([相关新闻](http://edu.dzwww.com/rcjy/qzgl/201710/t20171015_16536302.htm))
  2. 项目库状态由私有设置为公有
  3. 演示视频链接:[https://pan.baidu.com/s/1gftivsv](https://pan.baidu.com/s/1gftivsv) 密码:1111
- 4. 论文:基于人脸识别、GPS定位的签到系统.doc
+ 4. 论文:[基于人脸识别、GPS定位的签到系统.doc](https://github.com/szj1006/upSign/raw/v2.0/%E5%9F%BA%E4%BA%8E%E4%BA%BA%E8%84%B8%E8%AF%86%E5%88%AB%E3%80%81GPS%E5%AE%9A%E4%BD%8D%E7%9A%84%E7%AD%BE%E5%88%B0%E7%B3%BB%E7%BB%9F.doc)
 
 2017.10.12 更新：
 
